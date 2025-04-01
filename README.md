@@ -1,2 +1,2 @@
-# Semi-project-CodingHi
-세미 프로젝트 코하
+# final-project-Hapla
+파이널 프로젝트 Hapla
