@@ -1,2 +1,2 @@
-# final-project-Hapla
-파이널 프로젝트 Hapla
+# semi-project-CodingHi
+세미 프로젝트 CodingHi
