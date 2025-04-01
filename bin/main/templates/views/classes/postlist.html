@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<meta charset="utf-8">
+<link rel="stylesheet" href="/css/classes/postlist.css"/>
+<script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+</head>
+<body>
+	<div class="side-bar">
+		<div th:replace="~{views/menu-bar.html}"></div>
+	</div>
+	
+    <section class="post-list">
+        <div class="top-box">
+            <div class="image-box">
+                <img th:if="${#strings.containsIgnoreCase(img.imgRename, 'jpg') or #strings.containsIgnoreCase(img.imgRename, 'png')}" th:src="@{/}+${img.imgRename}" class="image-thumbnail">
+                <img th:unless="${#strings.containsIgnoreCase(img.imgRename, 'jpg') or #strings.containsIgnoreCase(img.imgRename, 'png')}" src="/photo/classes/example.png" class="image-thumbnail">
+            	<input id="imgRename" type="hidden" name="imgRename" value="${img.imgRename}">
+            </div>
+            <div class="manager-function">
+            	<th:block th:if="${session.loginUser != null && session.loginUser.admin == 'Y'}">
+                <img src="/photo/classes/update.png" class="lecture-update" id="lecture-update"/>
+                <img src="/photo/classes/delete.png" class="lecture-delete" id="lecture-delete"/>
+                </th:block>
+                <span id="bookmark" th:if="${lec.bookmarkCheck == 'Y'}">
+               		<input type="hidden" name="lectureNo" th:value="${lec.lecNo}">
+               		<input type="hidden" name="lecturebookmarkCheck" th:value="${lec.bookmarkCheck}">
+                    <img src="/photo/classes/Bookmark-icon2.png" class="image-bookmark"/>
+                </span>
+                <span id="bookmark" th:if="${lec.bookmarkCheck == 'N'}">
+               		<input type="hidden" name="lectureNo" th:value="${lec.lecNo}">
+               		<input type="hidden" name="lecturebookmarkCheck" th:value="${lec.bookmarkCheck}">
+                    <img src="/photo/classes/bookmark-icon.png" class="image-bookmark"/>
+                </span>
+            </div>
+            <div class="text-box-top">
+                <a>[[${lec.lecTitle}]]</a>
+                <br>
+                <a>[[${lec.lecSubtitle}]]</a><br>       
+            </div>
+            <div class="text-box-bottom">
+                <p>
+                	[[${lec.lecDesc}]]
+                </p>
+            </div>
+            <div class="function-option">
+                <div>
+                    <img src="/photo/classes/Inbox.png" class="inbox"/>
+                    <br>
+                    <a>Chapter</a>
+                    <p>[[${capCount}]]</p>
+                </div>
+                <div>
+                    <img src="/photo/classes/Forward.png" class="forward"/>
+                    <br>
+                    <a>Percent</a>
+                    <p>[[${progressRate == 0 ? "X" : progressRate + "%"}]]</p>
+                </div>
+                <div>
+                    <img src="/photo/classes/Emote_Smile.png" class="smile"/>
+                    <br>
+                    <a>Rating(5)</a>
+                    <p>[[${svgRate == 0 ? "X" : svgRate}]]</p>
+                </div> 
+            </div>
+        </div>
+        <div class="bottom-box">
+             <div class="lecture-list">
+                 <form class="lecture-item" th:each="c : ${cList}" method="post">
+                 	<input type="hidden" name="lecChapNum" th:value="${c.lecChapNum}">
+                 	<input type="hidden" name="chapNo" th:value="${c.chapNo}">
+                     <div>
+                         <a>Chpater [[${c.lecChapNum}]]</a><br>
+                         <a>[[${c.chapTitle}]]</a>
+                     </div>
+                     <span class="chapter-edit" th:if="${session.loginUser != null && session.loginUser.admin == 'Y'}">
+                     	 <input type="hidden" name="chapNo" th:value="${c.chapNo}">
+                         <img src="/photo/classes/update.png" class="chapter-update"/>
+                         <img src="/photo/classes/delete.png" class="chapter-delete"/>
+                     </span>
+                 </form>
+             </div>  
+        </div>
+    </section>
+    <script th:inline="javascript">
+    	window.onload= () =>{
+    		const lecturies = document.getElementsByClassName("lecture-item");
+    		const bookmark = document.getElementById("bookmark");
+    		const bookmarkCheck = bookmark.children[1].value
+//     		console.log(bookmark);
+    		/*<![CDATA[*/
+    		const lecNo = /*[[${lecNo}]]*/1;
+    		const loginUser = /*[[${session.loginUser}]]*/1;
+    		/*]]>*/
+//     		console.log(loginUser);
+    		
+    		const chapterEdits = document.getElementsByClassName("chapter-edit");
+    		const imgRename = document.getElementById("imgRename").value;
+    		
+
+
+			for(const lec of lecturies){
+				const chapNo = lec.children[1].value
+    			const lecChapNum = lec.children[0].value
+    			lec.addEventListener('click', ()=>{
+    				if(loginUser != null){
+    					lec.action = lecNo+"/"+lecChapNum;
+        				lec.submit();
+    				}else{
+    					alert("로그인 후 이용 바랍니다");
+    				}
+    			})
+			}
+			
+			bookmark.addEventListener('click', (event)=>{
+				if(loginUser){
+					const lecNo = bookmark.children[0].value
+					if(bookmarkCheck == "N"){
+						$.ajax({
+        					url: "/lecture/insertBookmark",
+       						data: {lecNo:lecNo},
+       		            	 success: data=>{
+       		            		 if(data = 1){
+       		            			 alert("현재 강의를 북마크에 등록하였습니다");
+       		            			 location.reload(true);
+       		            		 }
+       		            	 },
+       		            	 error: data=> console.log(data)
+       		             }) 
+					}else if(bookmarkCheck == "Y"){
+						$.ajax({
+        					url: "/lecture/deleteBookmark",
+       						data: {lecNo:lecNo},
+       		            	 success: data=>{
+       		            		 if(data = 1){
+       		            			 alert("현재 강의를 북마크에 해제하였습니다");
+       		            			 location.reload(true);
+       		            		 }
+       		            	 },
+       		            	 error: data=> console.log(data)
+       		             }) 
+					}
+				}else{
+					alert("로그인을 해야 북마크가 가능합니다");
+				}
+				
+			})
+			
+			for(const chapterEdit of chapterEdits){
+				const chapNo = chapterEdit.children[0].value;
+				const chapterUpdate = chapterEdit.children[1];
+				const chapterDelete = chapterEdit.children[2];
+				
+				chapterUpdate.addEventListener("click", (event)=>{
+					location.href = `/manager/chapterEdit?chapNo=${encodeURIComponent(chapNo)}`;
+					event.stopPropagation();
+				})
+				
+				chapterDelete.addEventListener("click", (event)=>{
+					if(confirm("정말 삭제하시겠습니까?")){
+						$.ajax({
+				            url: '/manager/deleteChapter',
+				            method: 'POST',
+				            data: { chapNo: chapNo },
+				            success: function(result) {
+				                if(result > 0) {
+				                    alert('챕터가 성공적으로 삭제되었습니다.');
+				                    location.reload();
+				                } else {
+				                    alert('챕터 삭제에 실패했습니다.');
+				                }
+				            },
+				            error: function(xhr, status, error) {
+				                console.error('Error:', error);
+				                alert('삭제 중 오류가 발생했습니다.');
+				            }
+				        });
+						event.stopPropagation();
+					}else{
+						event.stopPropagation();
+					}
+					
+				})
+			}
+			
+			const lectureUpdate = document.getElementById("lecture-update");
+			const lectureDelete = document.getElementById("lecture-delete");
+			console.log(lectureUpdate);
+			console.log(lectureDelete);
+			
+			lectureUpdate.addEventListener("click", ()=>{
+				
+			})
+			
+			lectureDelete.addEventListener("click", ()=>{
+				if(confirm("정말 강의를 삭제하시겠습니까?")){
+					location.href = "/manager/lectureDelete/" + lecNo + "/" +imgRename;
+				}
+			})
+			
+			lectureUpdate.addEventListener("click", ()=>{
+				location.href = "/manager/lectureUpdate/" + lecNo  ;
+			})
+    	}
+    </script>
+</body>
+</html>

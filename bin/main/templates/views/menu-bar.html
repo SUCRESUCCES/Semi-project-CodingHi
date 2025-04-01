@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title></title>
+<style>
+    body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+
+    }
+
+
+    .bar-container {
+        position: fixed;
+        transition: ease-out;
+        width: 200px;
+        height: auto;
+        border-radius: 30px;
+        border-right: 1px solid #E6E4F0;
+        background: #FFF;
+        box-shadow: 0px 3px 3px 0px rgba(0, 0, 0, 0.25);
+        padding-bottom: 20px;
+    }
+
+    .bar-header {
+        padding: 15px;
+    }
+
+
+    .bar-header img {
+        width: 130px;
+        height: 65px;
+        flex-shrink: 0;
+        margin-top: 8px;
+        margin-left: 23px;
+    }
+
+    .bar-header img:hover{
+        cursor: pointer;
+    }
+    .login-user {
+        margin: 4px;
+        padding: 15px;
+        width: 160px;
+        height: 150px;
+        border-radius: 20px;
+        border: 1px solid #dfdfdf;
+    }
+    .login-form {
+        margin: 4px;
+        padding: 15px;
+        width: 160px;
+        height: 210px;
+        border-radius: 20px;
+        border: 1px solid #dfdfdf;
+    }
+
+    .login-form input {
+        width: 150px;
+        height: 30px;
+        padding: 4px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        font-size: 11px;
+    }
+
+    .login-form button, .login-user button{
+        width: 100%;
+        padding: 9px;
+        border: none;
+        border-radius: 5px;
+        background-color: #57f;
+        color: #ffffff;
+        font-size: 12px;
+        cursor: pointer;
+        transition: background-color 0.3s, color 0.3s;
+        margin-top: 8px;
+    }
+
+    .login-form button:hover, .login-user button:hover {
+        background-color: #1e5491;
+    }
+
+    .login-form button:active, .login-user button:active {
+        background-color: #6a8eff;
+        color: white;
+    }
+
+
+    .links {
+        margin-top: 8px;
+        font-size: 10px;
+        color: #888;
+        text-align: center;
+    }
+
+    .links a {
+        color: #6a8eff;
+        text-decoration: none;
+    }
+
+    .links a:hover {
+        text-decoration: underline;
+    }
+
+
+    .bar-menu {
+        background-color: #ffffff;
+        padding: 12px;
+        border-top: 1px solid #e5e5e5;
+        margin-top: 15px;
+    }
+
+    .bar-menu a {
+        display: flex;
+        align-items: center;
+        padding: 12px;
+        margin-bottom: 4px;
+        color: #555;
+        text-decoration: none;
+        border-radius: 15px;
+        background-color: #ffffff;
+    }
+
+    .bar-menu a img {
+        width: 15px;
+        height: 15px;
+        margin-right: 8px;
+        vertical-align: middle;
+    }
+
+    .bar-menu a span {
+        line-height: 15px;
+        display: inline-block;
+        vertical-align: middle;
+    }
+
+
+    .bar-menu a.active {
+        background-color: #6a8eff;
+        color: white;
+    }
+
+
+    .bar-menu a:hover {
+        background-color: #e8edff;
+    }
+    .category-list {
+        background-color: #ffffff;
+        padding: 15px;
+        border-top: 1px solid #e5e5e5;
+        display: none;
+    }
+
+    .category-list a {
+        display: flex;
+        align-items: center;
+        padding: 6px;
+        margin-bottom: 4px;
+        color: #555;
+        text-decoration: none;
+        border-radius: 15px;
+        background-color: #ffffff;
+        margin-left: 15px;
+    }
+
+    .category-list a img {
+        width: 15px;
+        height: 15px;
+        margin-right: 8px;
+        vertical-align: middle;
+    }
+
+    .category-list a span {
+        line-height: 15px;
+        display: inline-block;
+        vertical-align: middle;
+    }
+
+
+    .category-list a.active {
+        background-color: #6a8eff;
+        color: white;
+    }
+
+    .category-list a:hover {
+        background-color: #e8edff;
+        cursor: pointer;
+        
+    }
+</style>
+</head>
+<body>
+<div class="bar-container">
+    <div class="bar-header">
+        <a href="/home">
+            <img src="/photo/menuBar/logo2.png" alt="Profile">
+        </a>
+    </div>
+    <form action="/member/login" th:if="${session.loginUser == null}" method="post">
+        <div class="login-form">
+            <a>ID</a>
+            <input type="text" placeholder="아이디를 입력해주세요." name="userId">
+            <p></p>
+            <a>Password</a>
+            <input type="password" placeholder="비밀번호를 입력해주세요." name="userPw">
+            <button>Sign In</button>
+            <div class="links">
+                <a href="/member/join">회원가입</a> / <a href="/member/find-id">아이디</a> /<a href="/member/find-pwd"> 패스워드 찾기</a>
+            </div>
+        </div>
+    </form>
+    <form action="/member/logout" th:if="${session.loginUser != null}">
+        <div class="login-user">
+            <br/>
+            <a>[[${session.loginUser.admin == "Y" ? "관리자" : "일반회원"}]]</a> <br/><br/>
+            <span>[[${session.loginUser.userName}]] 환영합니다</span>
+            <button>로그아웃</button>
+            <div class="links">
+                <a href="/member/my-page">마이페이지</a>
+            </div>
+        </div>
+    </form>
+
+    <div class="bar-menu">
+        <a href="/home" class="active"><img src="/photo/menuBar/homeicon.png" alt="Home"><span>HOME</span></a>
+        <a href="/"><img src="/photo/menuBar/calander.png"><span>SINU EDU 소개</span></a>
+        <a href="/qna/list"><img src="/photo/menuBar/act.png" ><span>질문 게시판</span></a>
+        <a href="/lecture/list"><img src="/photo/menuBar/Folder.png"><span>강의 목록</span></a>
+    </div>
+    <div class="category-list" id="category-list">
+    	<a><img src="/photo/menuBar/cggreen2.png"><span>BOOKMARK</span></a>
+        <a><img src="/photo/menuBar/cgred.png"><span>JAVA</span></a>
+        <a><img src="/photo/menuBar/cgblue.png"><span>ORACLE</span></a>
+        <a><img src="/photo/menuBar/cgpurple.png" ><span>JDBC</span></a>
+        <a><img src="/photo/menuBar/cggreen.png"><span>HTML-CSS</span></a>
+    </div>
+    <div class="admin bar-menu" th:style="'display:' + (${session.loginUser?.admin == 'Y'} ? 'block' : 'none')">
+        <hr>
+        <span><b>&nbsp&nbsp&nbsp관리자 메뉴</b></span>
+        <hr>
+        <a href="/manager/userList"><img src="/photo/menuBar/cgred.png"><span>회원정보 관리</span></a>
+        <a href="/manager/chapterList"><img src="/photo/menuBar/cgblue.png"><span>강의 관리</span></a>
+        <hr>
+    </div>
+</div>
+<script>
+    window.addEventListener("DOMContentLoaded", () => {
+    	const currentPath = window.location.pathname; // 현재 URL 경로
+        const menuLinks = document.querySelectorAll("a"); // 모든 <a> 태그 선택
+        menuLinks.forEach(link => {
+        	var lh = link.getAttribute("href")
+        	
+        	//lh가 null이 아니라면
+        	if(lh != null){
+        		//lh의 2번째 주소를 가져온다
+        		var lh2 = lh.split('/')[1];
+        		
+        		if (currentPath.includes(lh2) && lh2 != '') {
+        			if(lh2 == "manager"){
+        				if(currentPath == lh){
+        					link.classList.add("active");
+        				}
+        			}else{
+//                     	console.log("작동함 : "+currentPath);
+//                     	console.log("작동함 : "+ lh);
+//                     	console.log("작동함 : "+lh2);
+                        link.classList.add("active"); // 경로가 일치하면 active 클래스 추가
+        			}
+                } else {
+//                 	console.log("작동안함 : " + currentPath);
+//                 	console.log("작동안함 : "+ lh);
+//                 	console.log("작동안함 : " +lh2);
+                    link.classList.remove("active"); // 경로가 다르면 active 클래스 제거
+                }
+        	}
+        });
+        const categoryDiv = document.getElementById("category-list");
+        if (currentPath.includes("lecture/list") || currentPath.includes("lecture/category")) {
+            categoryDiv.style.display = "block";
+//             console.log(currentPath);
+        } else {
+            categoryDiv.style.display = "none";
+//             console.log(currentPath);
+        }
+        
+        const categoryA = categoryDiv.children;
+        for(const a of categoryA){
+        	a.addEventListener('click', ()=>{
+        		const spanVal = a.children[1].innerHTML;
+        		console.log(spanVal);
+        		
+				location.href = "/lecture/category/" + spanVal;
+        	})
+        }
+    });
+
+    
+</script>
+</body>
+</html>

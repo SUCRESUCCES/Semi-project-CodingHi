@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>홈</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+  <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+  <style>
+    body {
+      margin: 0 auto;
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      background-color: white;
+    }
+    .main-container {
+      display: flex;
+      justify-content: center;
+      width: auto;
+      margin-top: 50px;
+    }
+    .side-bar {
+      width: 200px;
+      height: 1000px;
+      position: sticky;
+      top: 100px;
+      margin: 50px;
+    }
+    .banner-container {
+      display: flex;
+      flex-direction: column;
+      width: auto;
+      padding: 20px;
+      box-sizing: border-box;
+      margin: 0 auto;
+    }
+
+    /* 가로 스크롤 & 버튼 */
+    .popular-lectures-container {
+      display: flex;
+      align-items: center;
+      width: 1100px;
+      position: relative;
+      border-bottom: 1px solid lightgray;
+    }
+
+    .scroll-container {
+      display: flex;
+      flex-direction: row;
+      gap: 15px;
+      overflow: hidden; /* 스크롤바 숨김 */
+      width: 1000px; /* 컨텐츠 크기 조정 */
+      scroll-behavior: smooth; /* 부드러운 이동 */
+    }
+
+    .scroll-left, .scroll-right {
+      background-color: #6a8eff;
+      border: none;
+      height: 100px;
+      padding: 10px 15px;
+      font-size: 18px;
+      cursor: pointer;
+      border-radius: 10%;
+      margin: 5px;
+    }
+
+    .scroll-left:hover, .scroll-right:hover {
+      background-color: #4c6ef5;
+    }
+
+
+    .class-element {
+      position: relative; /* 내부 요소의 absolute 위치 기준 */
+      flex-shrink: 0;
+      cursor: pointer;
+      display: inline-block;
+      box-sizing: border-box;
+      width: 240px;
+      height: 200px;
+      border-radius: 15px;
+      margin-left: 5px;
+      margin-right: 5px;
+      margin-bottom: 20px;
+      box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.10);
+      padding: 110px 5px 20px;
+      text-align: center;
+    }
+
+    .image-box {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100px;
+    }
+
+    .image-thumbnail {
+      border-top-left-radius: 15px;
+      border-top-right-radius: 15px;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+
+    .class-element:hover {
+      background-color: #f8f8f8;
+    }
+
+    .element-title {
+      float: left;
+      margin-left: 20px;
+    }
+
+    .element-title>p:nth-child(1) {
+      font-size: 16px;
+      font-weight: bold;
+      margin: 0 auto;
+      text-align: left;
+    }
+    
+    .image-bookmark:hover{
+	content: url("/photo/classes/Bookmark-icon2.png");
+	}
+
+
+    .element-title>p:nth-child(2) {
+      margin: 0 auto;
+      text-align: left;
+      font-size: 12px;
+      color: #56555C;
+    }
+
+    .image-bookmark {
+      float: right;
+      margin-right: 17px;
+      height: 35px;
+    }
+
+    .options {
+      display: inline-block;
+      margin-left: 12px;
+      margin-right: 12px;
+    }
+
+    .options>p:nth-child(1) {
+      font-weight: bold;
+      margin-bottom: 0px;
+    }
+
+    .options>p:nth-child(2) {
+      color: #757575;
+      font-size: 10px;
+      margin: 0px;
+    }
+
+    .qna-element {
+      cursor: pointer;
+      display: inline-block;
+      width: 310px;
+      height: 200px;
+      border-radius: 15px;
+      margin-left: 5px;
+      margin-right: 15px;
+      margin-bottom: 20px;
+      box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.10);
+      padding: 20px;
+      justify-content: center;
+      text-align: center;
+    }
+    .content-clamp {
+      display: -webkit-box;
+      -webkit-line-clamp: 2; /* 최대 2줄 표시 */
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: normal;
+    }
+    /* 📖 노트 스타일 */
+    .note-style {
+      background: #fffaf0; /* 연한 노트 색 */
+      border: 1px solid #ddd;
+      box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+      position: relative;
+      padding: 20px;
+      overflow: hidden;
+      min-width: 250px; /* 카드 크기 강제 고정 */
+      justify-content: space-between; /* 요소들이 위아래로 균형 있게 정렬됨 */
+      height: 12rem;
+    }
+
+    /* 📏 노트 줄무늬 */
+    .note-style::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: repeating-linear-gradient(
+              to bottom,
+              transparent 0px,
+              transparent 24px, /* 줄 간격 */
+              rgba(0, 0, 0, 0.07) 25px, /* 줄 색상 (더 연하게) */
+              transparent 26px
+      );
+      z-index: 0 !important;
+      pointer-events: none;
+    }
+
+    /* 📌 왼쪽 파란 공책 줄 (위치 고정) */
+    .note-style::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 10px; /* 모든 카드에서 동일한 위치 */
+      width: 3px; /* 모든 카드에서 동일한 두께 */
+      height: 100%;
+      background-color: rgba(0, 100, 255, 0.5); /* 연한 파란색 */
+      z-index: 1;
+    }
+    .note-style > div.absolute {
+      position: absolute;
+      bottom: 20px; /* 하단에서 일정 거리 유지 */
+      left: 20px;
+      right: 20px;
+    }
+    /* 📌 질문 목록 및 댓글 목록 스타일 조정 */
+    .my-qna-container {
+      background-color: #fff; /* 흰색 배경 유지 */
+      border: 2px solid #E3EEFF; /* 테두리 색상을 기존 스타일과 맞춤 */
+      border-radius: 10px; /* 모서리 둥글게 */
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* 기존 스타일과 유사한 그림자 효과 */
+      padding: 20px; /* 안쪽 여백 */
+    }
+
+    /* 📌 개별 QnA 및 댓글 박스 */
+    .my-qna-box, .my-comment-box {
+      background-color: #fff; /* 흰색 배경 유지 */
+      border: 2px solid #E3EEFF; /* 기존 스타일과 동일한 테두리 색 */
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* 기존 스타일과 동일한 그림자 */
+      border-radius: 10px; /* 기존 스타일과 유사한 둥근 테두리 */
+      padding: 20px;
+      color: #605F5F; /* 기존 스타일의 글자색 유지 */
+    }
+
+    /* 📌 테이블 스타일 */
+    .my-qna-box table, .my-comment-box table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .my-qna-box th, .my-comment-box th {
+      background-color: #E3EEFF; /* 기존 스타일과 동일한 연한 파란색 */
+      color: #605F5F; /* 기존 스타일과 동일한 글자 색상 */
+      padding: 10px;
+      text-align: center;
+    }
+
+    .my-qna-box td, .my-comment-box td {
+      padding: 10px;
+      border-bottom: 1px solid #ccc;
+      text-align: center;
+    }
+
+    /* 📌 테이블 hover 효과 */
+    .my-qna-box tbody tr:hover, .my-comment-box tbody tr:hover {
+      background-color: #F8F9FF; /* 기존 스타일과 동일한 hover 효과 */
+      cursor: pointer;
+    }
+
+    /* 📌 글자 스타일 조정 */
+    .my-qna-box h3, .my-comment-box h3 {
+      font-size: 18px;
+      font-weight: bold;
+      color: #333;
+      margin-bottom: 15px;
+    }
+
+    /* 📌 글 제목 및 댓글 내용 줄임 */
+    .my-qna-box .ellipsis, .my-comment-box .ellipsis {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 200px;
+    }
+
+    /* 📌 버튼 스타일 */
+    .write-button button {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 20px;
+      cursor: pointer;
+    }
+
+    .write-button button:hover {
+      background-color: #0056b3;
+    }
+
+
+  </style>
+</head>
+<body>
+<div class="main-container">
+  <div class="side-bar">
+    <div th:replace="~{views/menu-bar.html}"></div>
+  </div>
+
+  <div class="banner-container">
+    <h2>🚀 인기 강의</h2>
+    <div class="popular-lectures-container">
+      <button class="scroll-left">
+        <i class="material-icons" style="color: white">arrow_back_ios</i>
+
+      </button> <!-- 왼쪽 이동 버튼 -->
+      <div class="scroll-container">
+        <div class="class-element" th:each="lec : ${popularLectures}">
+          <input type="hidden" name="lectureNo" th:value="${lec.lecNo}">
+          <div class="image-box">
+            <img src="/photo/classes/example.png" class="image-thumbnail">
+          </div>
+          <div class="element-title">
+            <p>[[${lec.lecTitle}]]</p>
+            <p>[[${lec.cgName}]]</p>
+          </div>
+          <div class="bookmark" th:if="${lec.bookmarkCheck == 'Y'}">
+         		<input type="hidden" name="lectureNo" th:value="${lec.lecNo}">
+         		<input type="hidden" name="lecturebookmarkCheck" th:value="${lec.bookmarkCheck}">
+              <img src="/photo/classes/Bookmark-icon2.png" class="image-bookmark"/>
+          </div>
+          <div class="bookmark" th:if="${lec.bookmarkCheck == 'N'}">
+         		<input type="hidden" name="lectureNo" th:value="${lec.lecNo}">
+         		<input type="hidden" name="lecturebookmarkCheck" th:value="${lec.bookmarkCheck}">
+              <img src="/photo/classes/bookmark-icon.png" class="image-bookmark"/>
+          </div>
+          <br><br>
+          <div class="option-list">
+            <div class="options">
+              <p>[[${lec.totalChap}]]</p>
+              <p>Chapter</p>
+            </div>
+            <div class="options">
+              <p>[[${lec.progressRate == 0 ? "X" : lec.progressRate + "%"}]]</p>
+              <p>Percent</p>
+            </div>
+            <div class="options">
+              <p>[[${lec.svgRate == 0 ? "X" : lec.svgRate}]]</p>
+              <p>Rating(5)</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <button class="scroll-right">
+        <i class="material-icons" style="color: white">arrow_forward_ios</i>
+      </button> <!-- 오른쪽 이동 버튼 -->
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-4">
+      <h2>🔥조회수 TOP3 질문</h2>
+      <!-- 인기 질문 카드 반복문 적용 -->
+      <div class="bg-white shadow-lg rounded-xl p-4 border border-gray-200 qna-element note-style flex flex-col"
+           th:each="pq : ${popularQna}">
+        <input type="hidden" name="qnaNo" th:value="${pq.qnaNo}">
+        <h3 class="text-lg font-semibold truncate content-clamp" th:text="${pq.qnaTitle}">
+          🔥 질문 제목
+        </h3>
+        <p class="text-gray-600 text-sm content-clamp flex-grow my-2" th:text="${pq.qnaDetail}">
+          질문 내용의 일부가 여기에 들어갑니다...
+        </p>
+        <div class="flex justify-between text-gray-500 text-xs absolute bottom-4 left-4 right-4">
+          <span class="flex items-center">
+              👁️‍🗨️ <span th:text="${pq.views}" class="ml-1"></span> 조회
+          </span>
+          <span class="flex items-center">
+              💬 <span th:text="${pq.replyCount}" class="ml-1"></span> 댓글
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <div class="flex gap-6 justify-center p-6 my-qna-container">
+      <!-- 📌 내가 쓴 질문 목록 -->
+      <div class="my-qna-box w-[500px] p-4 rounded-lg shadow-md border border-gray-300 relative">
+        <h3 class="font-semibold text-lg mb-3 text-center">📖 내가 쓴 질문글 (최신순 5개)</h3>
+        <table class="w-full text-sm border-collapse">
+          <thead>
+          <tr class="bg-gray-100">
+            <th class="p-2 border">카테고리</th>
+            <th class="p-2 border">글제목</th>
+            <th class="p-2 border">작성일</th>
+            <th class="p-2 border">조회수</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr th:each="qna : ${myRecentQna}" class="hover:bg-gray-50 myRecQna">
+            <input type="hidden" name="qnaNo" th:value="${qna.qnaNo}">
+            <td class="p-2 border ellipsis" th:text="${qna.cgName}"></td>
+            <td class="p-2 border">
+              <a class="ellipsis" th:text="${#strings.length(qna.qnaTitle) > 15 ? #strings.substring(qna.qnaTitle, 0, 15) + '...' : qna.qnaTitle}">
+              </a>
+            </td>
+            <td class="p-2 border" th:text="${#dates.format(qna.createDate, 'yyyy-MM-dd')}"></td>
+            <td class="p-2 border" th:text="${qna.views}"></td>
+          </tr>
+          </tbody>
+
+        </table>
+      </div>
+
+      <!-- 📌 내가 쓴 댓글 목록 -->
+      <div class="my-comment-box w-[500px] p-4 rounded-lg shadow-md border border-gray-300 relative">
+        <h3 class="font-semibold text-lg mb-3 text-center">📝 내가 쓴 댓글 (최신순 5개)</h3>
+        <table class="w-full text-sm border-collapse">
+          <thead>
+          <tr class="bg-gray-100">
+            <th class="p-2 border">카테고리</th>
+            <th class="p-2 border">질문글 제목</th>
+            <th class="p-2 border">댓글 내용</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr th:each="rc : ${myRecentComments}" class="hover:bg-gray-50 text-center myRecComm">
+            <input type="hidden" name="qnaNo" th:value="${rc.qnaNo}">
+            <td class="p-2 border ellipsis" th:text="${rc.cgName}"></td>
+            <td class="p-2 border">
+              <a class="ellipsis" th:text="${#strings.length(rc.qnaTitle) > 15 ? #strings.substring(rc.qnaTitle, 0, 15) + '...' : rc.qnaTitle}"></a>
+            </td>
+            <td class="p-2 border ellipsis"
+                th:text="${#strings.length(rc.repComment) > 30 ? #strings.substring(rc.repComment, 0, 30) + '...' : rc.repComment}"></td>
+          </tr>
+          </tbody>
+
+        </table>
+      </div>
+    </div>
+
+
+    </div>
+  </div>
+
+
+<script th:inline="javascript">
+  document.addEventListener("DOMContentLoaded", () => {
+    const scrollContainer = document.querySelector(".scroll-container");
+    const scrollLeft = document.querySelector(".scroll-left");
+    const scrollRight = document.querySelector(".scroll-right");
+    const bookmarks = document.getElementsByClassName("bookmark");
+    const loginUser = /*[[${session.loginUser != null}]]*/1;
+
+    // 카드 하나의 너비 (이동 거리 설정)
+    const cardWidth = document.querySelector(".class-element").offsetWidth + 15;
+
+    let isAnimating = false; // 애니메이션 중복 방지
+
+    // 부드러운 스크롤
+    function smoothScroll(targetPosition) {
+      isAnimating = true;
+      const startPosition = scrollContainer.scrollLeft;
+      const distance = targetPosition - startPosition;
+      const duration = 400; // 애니메이션 지속 시간 (ms)
+      let startTime = null;
+
+      function animation(currentTime) {
+        if (!startTime) startTime = currentTime;
+        const timeElapsed = currentTime - startTime;
+        const progress = Math.min(timeElapsed / duration, 1);
+
+        scrollContainer.scrollLeft = startPosition + distance * easeOutCubic(progress);
+
+        if (timeElapsed < duration) {
+          requestAnimationFrame(animation);
+        } else {
+          isAnimating = false;
+        }
+      }
+
+      requestAnimationFrame(animation);
+    }
+
+    // 가속도 애니메이션
+    function easeOutCubic(t) {
+      return 1 - Math.pow(1 - t, 3);
+    }
+
+    // 왼쪽 이동 버튼 클릭
+    scrollLeft.addEventListener("click", () => {
+      if (!isAnimating) {
+        smoothScroll(scrollContainer.scrollLeft - cardWidth);
+      }
+    });
+
+    // 오른쪽 이동 버튼 클릭
+    scrollRight.addEventListener("click", () => {
+      if (!isAnimating) {
+        smoothScroll(scrollContainer.scrollLeft + cardWidth);
+      }
+    });
+
+    // 강의 클릭
+    const lecElements = document.getElementsByClassName("class-element");
+    for (const element of lecElements) {
+      const lecNo = element.children[0].value;
+      element.addEventListener("click", () => {
+        location.href = "lecture/" + lecNo;
+      });
+    }
+    // 조회수 질문 클릭
+    const qnaElement = document.getElementsByClassName("qna-element");
+    for (const element of qnaElement) {
+      const qnaNo = element.children[0].value;
+      element.addEventListener("click", () => {
+        location.href = "qna/" + qnaNo + "/" + 1;
+      });
+    }
+
+    const myRecentQna = document.getElementsByClassName("myRecQna");
+    for (const element of myRecentQna) {
+      const qnaNo = element.children[0].value;
+      element.addEventListener("click", () => {
+        location.href = "qna/" + qnaNo + "/" + 1;
+      });
+    }
+
+    const myRecentComments = document.getElementsByClassName("myRecComm");
+    for (const element of myRecentComments) {
+      const qnaNo = element.children[0].value;
+      element.addEventListener("click", () => {
+        location.href = "qna/" + qnaNo + "/" + 1;
+      });
+    }
+    
+	for(const bookmark of bookmarks){
+		const bookmarkCheck = bookmark.children[1].value
+		bookmark.addEventListener('click', (event)=>{
+			if(loginUser){
+				const lecNo = bookmark.children[0].value
+				if(bookmarkCheck == "N"){
+					$.ajax({
+    					url: "/lecture/insertBookmark",
+   						data: {lecNo:lecNo},
+   		            	 success: data=>{
+   		            		 if(data = 1){
+   		            			 alert("현재 강의를 북마크에 등록하였습니다");
+   		            			 location.reload(true);
+   		            		 }
+   		            	 },
+   		            	 error: data=> console.log(data)
+   		             }) 
+				}else if(bookmarkCheck == "Y"){
+					$.ajax({
+    					url: "/lecture/deleteBookmark",
+   						data: {lecNo:lecNo},
+   		            	 success: data=>{
+   		            		 if(data = 1){
+   		            			 alert("현재 강의를 북마크에 해제하였습니다");
+   		            			 location.reload(true);
+   		            		 }
+   		            	 },
+   		            	 error: data=> console.log(data)
+   		             }) 
+				}
+			}else{
+				alert("로그인을 해야 북마크가 가능합니다");
+			}
+			
+
+			event.stopPropagation();
+		})
+	}
+    
+    
+  });
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>find-pwd-success</title>
+<style>
+body {
+background-color:  #f9fbff;
+margin: 0;
+display: flex;
+justify-content: center;
+font-family: Arial, sans-serif;
+}
+.container {
+position: relative;
+display: flex;
+width: 100%;
+max-width: 1400px;
+}
+
+/* 메인 바*/
+.content-container{
+position: relative;
+top: 140px;
+display:flex;
+flex-direction: column;
+box-sizing: border-box;
+margin: 0 auto;
+height: 800px;
+width: 1100px;
+background: #FFF;
+border-radius: 20px;
+box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+}
+.steps{
+display: flex;
+justify-content: space-between;
+width: 100%;
+}		
+.step{
+flex: 1;
+text-align: center;
+padding: 20px;
+width: 100%;
+font-weight: bold;
+border-radius: 20px 20px 0 0;
+background-color: #FFB7B7;
+width: 100%;
+}
+.content {
+text-align: center;
+}
+.input{
+margin: 10px;
+padding: 12px;
+font-size: 16px;
+background-color: #f0f0f0;
+border: 2px solid #ccc;
+border-radius: 8px;
+box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+width: 380px;
+outline: none;
+text-align: left;
+}
+.pwd-hint select{
+margin: 10px;
+padding: 12px;
+font-size: 16px;
+background-color: #f0f0f0;
+border: 2px solid #ccc;
+border-radius: 8px;
+width: 400px;
+outline: none;
+text-align: left;
+}
+.pwd-hint input{
+margin: 10px;
+padding: 12px;
+font-size: 16px;
+background-color: #f0f0f0;
+border: 2px solid #ccc;
+border-radius: 8px;
+width: 380px;
+outline: none;
+text-align: left;
+}
+.next-button{
+margin: 0 auto;
+font-size: 20px;
+color: white;
+background-color: #5577ff;
+border: none;
+border-radius: 10px;
+cursor: pointer;
+width: 200px;
+margin-top: 10px;
+margin-bottom: 10px;
+}
+.main-button{
+margin: 0 auto;
+font-size: 20px;
+color: white;
+background-color: #5577ff;
+border: none;
+border-radius: 10px;
+cursor: pointer;
+width: 200px;
+margin-top: 10px;
+margin-bottom: 10px;
+}
+
+</style>
+</head>
+<body>
+    <div class="container">
+        <div class="content-container"> 
+			<div class="steps">
+				<div class="step">
+					비밀번호 찾기
+				</div>
+			</div>
+
+			<div class="content">
+				<br/>
+				<br/>
+				<br/>
+				<br/>
+				<br/>
+				<br/>
+				<br/>
+				<br/>
+				<br/>
+				<br/>
+				<br/>
+				<h1>임시 비밀번호가 발급되었습니다.</h1>
+        		<p>임시 비밀번호: <strong th:text="${tempPassword}"></strong></p>
+        		<p>임시 비밀번호를 사용해 로그인 후 반드시 비밀번호를 변경해주세요.</p>
+				<br/>
+				<br/>
+				<br/>
+				<br/>
+				<br/>
+				<div class="main-button">
+					<button class="main-button" id="mainButton" onclick="location.href='/'">메인 페이지</button>
+				</div>
+			</div>
+		</div>
+    </div>
+</body>
+</html>

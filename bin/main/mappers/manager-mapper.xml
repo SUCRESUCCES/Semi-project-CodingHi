@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sinuedu.user.manager.model.mapper.ManagerMapper">
+
+	<select id="userList" resultType="com.sinuedu.user.member.model.vo.Member">
+		select *
+		from users
+	</select>
+
+	<select id="categoryList" resultType="com.sinuedu.board.lecture.model.vo.Category">
+	    select cg_no, cg_name
+	    from category
+	    order by cg_no
+	</select>
+
+	<select id="lectureList" resultType="com.sinuedu.board.lecture.model.vo.Lecture">
+	    select l.*, c.cg_name
+	    from lecture l
+	    inner join category c on l.cg_no = c.cg_no
+	    order by l.lec_no
+	</select>
+	
+	<select id="chapterList" resultType="com.sinuedu.board.lecture.model.vo.Chapter">
+		select ch.chap_no as chapNo,c.cg_name as cgname, l.lec_title as lectitle, ch.chap_title as chaptitle, ch.update_date as updatedate
+		from chapter ch
+		inner join lecture l on ch.lec_no = l.lec_no
+		inner join category c on l.cg_no = c.cg_no
+		order by ch.update_date desc
+	</select>
+	
+	<delete id="deleteViewChapter">
+		delete from VIEW_CHAPTER
+		where chap_no = #{chapNo}
+	</delete>
+
+	<delete id="deleteChapter">
+		delete from chapter
+		where chap_no = #{chapNo}
+	</delete>
+	
+	<delete id="deleteAllChapter">
+		delete from chapter
+		where lec_no = #{lecNo}
+	</delete>
+	
+	<delete id="deleteLecture">
+		delete from Lecture
+		where lec_no = #{lecNo}
+	</delete>
+	
+	<insert id="insertChapter" parameterType="com.sinuedu.board.lecture.model.vo.Chapter">
+	    insert into chapter (chap_no, chap_title, chap_detail, create_date, update_date, views, lec_no, chap_rate)
+	    values (chapter_seq.nextval, #{chapTitle}, #{chapDetail}, sysdate, sysdate, 0, #{lecNo}, #{chapRate})
+	</insert>
+
+	<select id="getChapterByTitle" resultType="com.sinuedu.board.lecture.model.vo.Chapter">
+	    select ch.*, l.lec_title as lectitle, c.cg_name as cgname
+	    from chapter ch
+		    inner join lecture l on ch.lec_no = l.lec_no
+		    inner join category c on l.cg_no = c.cg_no
+	    where ch.chap_No = #{chapNo}
+	</select>
+
+	<update id="updateChapter">
+	    update chapter 
+	    set chap_title = #{chapTitle}, chap_detail = #{chapDetail}, update_date = sysdate, lec_no = #{lecNo}
+	    where chap_no = #{chapNo}
+	</update>
+	
+	<update id="updateAdminStatus">
+		update users 
+		set admin = #{adminStatus}
+		where user_id = #{userId}
+	</update>
+	
+	<update id="updateUserStatus">
+		update users 
+		set status = #{status}
+		where user_id = #{userId}
+	</update>
+
+	<insert id="insertLecture">
+		<selectKey order="BEFORE" resultType="_int" keyProperty="lecNo">
+			select LECTURE_SEQ.nextval from dual
+		</selectKey>
+		insert into LECTURE
+		values(#{lecNo}, #{lecTitle}, #{lecSubtitle}, #{lecDesc}, #{totalChap}, default)
+	</insert>
+	
+	<insert id="insertImage">
+		insert into image
+		values(image_new, #{imgPath}, #{imgName}, #{imgRename}, #{refLecNo})
+	</insert>
+	
+	<update id="updateLecture">
+		update LECTURE
+		set LEC_TITLE = #{lecTitle}, LEC_SUBTITLE = #{lecSubtitle}, LEC_DESC = #{lecDesc}
+		where LEC_NO = #{lecNo}
+	</update>
+	
+	<update id="updateImage">
+		update image
+		set IMG_PATH = #{imgPath}, IMG_NAME = #{imgName}, IMG_RENAME = #{imgRename}
+		where REF_LEC_NO = #{refLecNo}
+	</update>
+</mapper>

@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="https://code.jquery.com/jquery-3.7.1.js"
+	integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4="
+	crossorigin="anonymous"></script>
+<link rel="stylesheet" href="/css/summernote/summernote-lite.css">
+<title>챕터 추가</title>
+<style>
+body {
+	margin: 0;
+	font-family: Arial, sans-serif;
+	display: flex;
+	justify-content: center;
+	background-color: #f4f4f4;
+	align-items: center;
+	min-height: 100vh;
+}
+
+.container {
+	display: flex;
+	width: 100%;
+	max-width: 1400px;
+}
+
+.content-container {
+	display: flex;
+	flex-direction: column;
+	width: 1100px;
+	min-height: 750px;
+	max-height: none;
+	background: #fff;
+	border-radius: 20px;
+	padding: 20px;
+	margin: 0 auto;
+	box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+}
+
+.content-header {
+	background-color: #ffe4d6;
+	padding: 20px;
+	border-radius: 15px;
+	margin-bottom: 20px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.content-header h2 {
+	margin: 0;
+	color: #333;
+}
+
+.form-section {
+	background: #fffbeb;
+	padding: 20px;
+	border-radius: 15px;
+	margin-bottom: 20px;
+}
+
+.form-group {
+	margin-bottom: 20px;
+	display: flex;
+	align-items: center;
+}
+
+select, input, textarea {
+	width: 100%;
+	padding: 12px;
+	border: 1px solid #ddd;
+	border-radius: 8px;
+	font-size: 14px;
+	box-sizing: border-box;
+}
+
+#categoryFilter, #lectureFilter {
+	width: 200px;
+	height: 35px;
+	padding: 8px;
+	border: 1px solid #ddd;
+	border-radius: 6px;
+	background-color: white;
+	cursor: pointer;
+	outline: none;
+	font-size: 13px;
+	text-align: center;
+	appearance: none;
+	background-image:
+		url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+	background-repeat: no-repeat;
+	background-position: right 8px center;
+	background-size: 16px;
+	padding-right: 30px;
+	margin-right: 20px;
+}
+
+#categoryFilter:hover, #lectureFilter:hover {
+	border-color: #4285f4;
+}
+
+#categoryFilter:focus, #lectureFilter:focus {
+	border-color: #4285f4;
+	box-shadow: 0 0 0 2px rgba(66, 133, 244, 0.1);
+}
+
+.button-group {
+	display: flex;
+	justify-content: flex-end;
+	gap: 10px;
+	margin-top: 30px;
+}
+
+.add-btn, .cancel-btn {
+	padding: 12px 30px;
+	border: none;
+	border-radius: 15px;
+	font-size: 16px;
+	cursor: pointer;
+	transition: background-color 0.3s ease;
+}
+
+.add-btn {
+	background-color: #7aa2ff;
+	color: white;
+}
+
+.cancel-btn {
+	background-color: #ff9b9b;
+	color: white;
+}
+
+.add-btn:hover {
+	background-color: #6088e0;
+}
+
+.cancel-btn:hover {
+	background-color: #e88282;
+}
+
+.add-btn:hover, .cancel-btn:hover {
+	transform: translateY(-2px);
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.note-editable {
+	max-height: 400px;
+	overflow-y: auto;
+}
+
+.form-section {
+	flex-grow: 1;
+	display: flex;
+	flex-direction: column;
+}
+
+#summernote {
+	flex-grow: 1;
+}
+</style>
+</head>
+<body>
+	<div class="container">
+		<div class="content-container">
+			<div class="content-header">
+				<h2>챕터 추가</h2>
+			</div>
+			<form id="chapterForm" action="/manager/insertChapter" method="POST"
+				enctype="multipart/form-data">
+				<div class="form-section">
+					<div class="form-group">
+						<select id="categoryFilter">
+							<option value="">카테고리 선택</option>
+							<option th:each="category : ${categories}" th:value="${category}"
+								th:text="${category}"></option>
+						</select> <select id="lectureFilter" name="lecNo">
+							<option value="">강의 선택</option>
+							<option th:each="lecture : ${lectures}"
+								th:value="${lecture.lecNo}" th:text="${lecture.lecTitle}"
+								th:data-category="${lecture.cgName}"></option>
+						</select>
+					</div>
+					<div class="form-group">
+						<input type="text" id="title" name="chapTitle" placeholder="제목">
+					</div>
+					<textarea id="summernote" name="chapDetail"></textarea>
+					<div class="button-group">
+						<button type="button" id="submitChapter" class="add-btn">추가</button>
+						<button type="button" class="cancel-btn"
+							onclick="javascript:history.back();">취소</button>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+
+<script src="/js/summernote/summernote-lite.js"></script>
+<script src="/js/summernote/lang/summernote-ko-KR.js"></script>
+<script th:inline="javascript">
+	$(document).ready(function() {
+	    // Summernote 초기화
+	    $('#summernote').summernote({
+	        toolbar: [
+	            ['style', ['borderBtn', 'style']],
+	            ['font', ['bold', 'underline', 'clear']],
+	            ['fontsize', ['fontsize']],
+	            ['height', ['height']],
+	            ['color', ['color']],
+	            ['para', ['ul', 'ol', 'paragraph']],
+	            ['table', ['table']],
+	            ['insert', ['link']],
+	            ['view', ['codeview', 'help']],
+	            ['image', ['picture', 'resizeFull', 'resizeHalf', 'resizeQuarter', 'resizeNone']],
+	            ['float', ['floatLeft', 'floatRight', 'floatNone']],
+	            ['remove', ['removeMedia']],
+	        ],
+	        height: 400,
+	        minHeight: 400,
+	        maxHeight: 400,
+	        focus: true,
+	        lang: "ko-KR",
+	        placeholder: '내용을 입력해 주세요',
+	        callbacks: {
+	            onInit: function() {
+	                $('.note-editable').css('background-color', 'white');
+	            }
+	        }
+	    });
+	});
+	
+	window.onload = () => {
+        const categoryFilter = document.getElementById('categoryFilter');
+        const lectureFilter = document.getElementById('lectureFilter');
+        
+        // 강의 옵션을 배열로 변환
+        const lectures = Array.from(lectureFilter.options).map(option => ({
+            value: option.value,
+            text: option.text,
+            category: option.dataset.category
+        }));
+
+        // 카테고리 필터 변경
+        categoryFilter.addEventListener('change', () => {
+            updateLectureFilter(lectures);
+        });
+
+        // 초기에 강의 필터 비활성화
+        lectureFilter.disabled = true;
+    };
+
+    // 강의 필터 업데이트 함수
+    function updateLectureFilter(lectures) {
+        const selectedCategory = document.getElementById('categoryFilter').value;
+        const lectureFilter = document.getElementById('lectureFilter');
+
+        // 강의 필터 초기화
+        lectureFilter.innerHTML = '<option value="">강의 선택</option>';
+        
+        if (selectedCategory) {
+            // 선택된 카테고리에 해당하는 강의만 필터링
+            const filteredLectures = lectures.filter(lecture => lecture.category === selectedCategory);
+            
+            // 필터링된 강의를 옵션으로 추가
+            filteredLectures.forEach(lecture => {
+                const option = document.createElement('option');
+                option.value = lecture.value;
+                option.textContent = lecture.text;
+                lectureFilter.appendChild(option);
+            });
+
+            // 강의 필터 활성화
+            lectureFilter.disabled = false;
+        } else {
+            // 카테고리가 선택되지 않았을 때 강의 필터 비활성화
+            lectureFilter.disabled = true;
+        }
+    }
+
+    // 챕터 제출 버튼 클릭
+    document.getElementById('submitChapter').addEventListener('click', function(e) {
+        e.preventDefault();
+        
+        var category = document.getElementById('categoryFilter').value;
+        var lecture = document.getElementById('lectureFilter').value;
+        var title = document.getElementById('title').value;
+        var content = $('#summernote').summernote('code');
+
+        if (!category || !lecture || !title || !content) {
+            alert('모든 필드를 채워주세요.');
+            return;
+        }
+        
+        $.ajax({
+            url: '/manager/insertChapter',
+            type: 'POST',
+            data: {
+                lecNo: lecture,
+                chapTitle: title,
+                chapDetail: content
+            },
+            success: function(data) {
+                if (data.success) {
+                    alert('챕터가 성공적으로 추가되었습니다.');
+                    window.location.href = '/manager/chapterList';
+                } else {
+                    alert('챕터 추가에 실패했습니다.');
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error('Error:', error);
+                alert('오류가 발생했습니다. 다시 시도해주세요.');
+            }
+        });
+    });
+</script>
+</body>
+</html>

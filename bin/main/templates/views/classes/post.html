@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<link rel="stylesheet" href="/css/classes/post.css"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css">
+<script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+</head>
+<body>
+	<div class="side-bar">
+		<div th:replace="~{views/menu-bar.html}"></div>
+	</div>
+	
+    <section>
+        <div class="top-box">
+            <div class="top-text">
+                <p>[[${chapter.cgName}]] CHAPTER[[${chapter.lecChapNum}]]</p>
+                <p>[[${chapter.chapTitle}]]</p>
+            </div>
+        </div>
+
+        <div class="middle-box">
+            <span class="middle-text-right">
+                <p>조회수 [[${chapter.views}]]</p>
+            </span>
+            <span class="middle-text-left">
+                <p>[[${chapter.updateDate}]]</p>
+            </span>
+        </div>
+
+        <div class="bottom-box">
+            <div class="bottom-content">
+                <p th:utext="${chapter.chapDetail}"></p>
+            </div>
+            <hr>
+            <div class="bottom-option">
+                <div class="bottom-option-grade">
+                    <p>강의가 마음에 드셨나요?</p>
+                    <div class="rating">
+					    <span class="rating__result"></span> 
+					    <i class="rating__star far fa-star"></i>
+					    <i class="rating__star far fa-star"></i>
+					    <i class="rating__star far fa-star"></i>
+					    <i class="rating__star far fa-star"></i>
+					    <i class="rating__star far fa-star"></i>
+					</div>
+                </div>
+                <div class="bottom-option-menu">
+                    <button class="class-list" id="classList" onclick="javascript:history.back();">목록</button>
+                </div>
+                <div class="chapter-edit" th:if="${session.loginUser != null && session.loginUser.admin == 'Y'}">
+                    <img src="/photo/classes/update.png" class="chapter-update"/>
+                    <img src="/photo/classes/delete.png" class="chapter-delete"/>
+                </div>
+            </div>     
+        </div>
+    </section>
+    
+    <script th:inline="javascript">
+    
+    const ratingStars = [...document.getElementsByClassName("rating__star")];
+    const ratingResult = document.querySelector(".rating__result");
+    const lecNo = /*[[${lecNo}]]*/1;
+    console.log(lecNo);
+	const chapNo = /*[[${chapter.chapNo}]]*/2;
+// 	console.log(chapNo);
+
+	const chapterEdit = document.getElementsByClassName("chapter-edit")[0];
+    
+	printRatingResult(ratingResult);
+	
+    function executeRating(stars, result) {
+       const starClassActive = "rating__star fas fa-star";	 // 활성화된 별 클래스
+       const starClassUnactive = "rating__star far fa-star"; // 비활성화된 별 클래스
+       const starsLength = stars.length;					 // 별의 총 개수
+       
+       
+       stars.map((star) => {
+          star.onclick = () => {	// 별을 클릭했을 때 실행
+             i = stars.indexOf(star);	// 클릭한 별의 인덱스 가져오기
+             if (star.className.indexOf(starClassUnactive) !== -1) {
+            	// 비활성화된 별을 클릭한 경우
+                printRatingResult(result, i + 1); // 점수 표시
+                for (i; i >= 0; --i) stars[i].className = starClassActive; // 클릭한 별까지 활성화
+             } else {
+            	// 활성화된 별을 클릭한 경우
+            	i += 1;
+                printRatingResult(result, i);	// 점수 업데이트
+                for (i; i < starsLength; ++i) stars[i].className = starClassUnactive; // 클릭한 별 이후 모두 비활성화
+             }
+             
+             const rating = ratingResult.innerHTML.substr(0,1);
+             console.log(rating);
+             
+             $.ajax({
+            	 url: "/lecture/rating",
+            	 data: {
+            		 rating: rating,
+            		 chapNo: chapNo
+            	 },
+            	 success: data=>{
+            		 console.log(data);
+            	 },
+            	 error: data=> console.log(data)
+             })
+          };
+       });
+    }
+
+    function printRatingResult(result, num = 0) {
+    	   result.textContent = `${num}/5`;
+    	}
+
+    executeRating(ratingStars, ratingResult);
+    
+    
+    
+	const chapterUpdate = chapterEdit.children[0];
+	const chapterDelete = chapterEdit.children[1];
+	
+	chapterUpdate.addEventListener("click", (event)=>{
+		location.href = `/manager/chapterEdit?chapNo=${encodeURIComponent(chapNo)}`;
+		event.stopPropagation();
+	})
+	
+	chapterDelete.addEventListener("click", (event)=>{
+		if(confirm("정말 삭제하시겠습니까?")){
+			$.ajax({
+	            url: '/manager/deleteChapter',
+	            method: 'POST',
+	            data: { chapNo: chapNo },
+	            success: function(result) {
+	                if(result > 0) {
+	                    alert('챕터가 성공적으로 삭제되었습니다.');
+	                    history.back();
+	                } else {
+	                    alert('챕터 삭제에 실패했습니다.');
+	                }
+	            }
+	            
+	        });
+			
+		}else{
+			
+		}
+		
+	})
+	
+    
+    </script>
+
+</html>

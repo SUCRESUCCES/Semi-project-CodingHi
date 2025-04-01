@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sinuedu.user.member.model.mapper.MemberMapper">
+	<select id = "login" resultMap="resultLogin">
+		select *
+		from users
+		where user_id = #{userId} and status = 'Y'
+	</select>
+	
+	<resultMap type="com.sinuedu.user.member.model.vo.Member" id="resultLogin">
+		<result column="BIRTH_DATE" property="birthDate"/>
+	</resultMap>
+
+	<insert id="insertMember">
+		insert into users
+		values(users_seq.nextval, #{userId}, #{userPw}, #{userName}, #{userNick}, #{phone}, #{birthDate}, default, #{hint}, #{hintAnswer}, default, default)
+	</insert>
+	
+	<select id="checkId" resultType="_int">
+		select count(*)
+		from users
+		where user_id = #{userId}
+	</select>
+	
+	<select id="checkUserNick" resultType="_int">
+		select count(*)
+		from users
+		where user_nick = #{userNick}
+	</select>
+	
+	<select id="findMyId" resultType="String">
+		select user_id
+		from users
+		where user_name = #{userName} and phone = #{phone} and birth_date = #{birthDate}
+	</select>
+	
+	<resultMap type="com.sinuedu.user.member.model.vo.Member" id="findId">
+		<result column="BIRTH_DATE" property="birthDate"/>
+	</resultMap>
+	
+	<update id="updateMember">
+	    UPDATE users
+	    SET user_name = COALESCE(#{userName}, user_name),
+	        user_nick = COALESCE(#{userNick}, user_nick),
+	        user_pw = COALESCE(#{userPw}, user_pw),
+	        phone = COALESCE(#{phone}, phone),
+	        birth_date = COALESCE(#{birthDate}, birth_date),
+	        hint = COALESCE(#{hint}, hint),
+	        hint_answer = COALESCE(#{hintAnswer}, hint_answer)
+	    WHERE user_id = #{userId}
+	</update>
+
+	<select id="findMyPw" parameterType="map">
+	    select *
+	    from users
+	    where user_id = #{userId} and hint = #{hint} and hint_answer = #{hintAnswer}
+	</select>
+	
+	<update id="updatePw" parameterType="map">
+	    UPDATE users
+	    SET user_pw = #{encodedPassword}
+	    WHERE user_id = #{userId}
+	</update>
+</mapper>

@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="https://code.jquery.com/jquery-3.7.1.js"
+	integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4="
+	crossorigin="anonymous"></script>
+<title>관리자 페이지</title>
+<style>
+body {
+	margin: 0;
+	font-family: Arial, sans-serif;
+	display: flex;
+	justify-content: center;
+	background-color: #f4f4f4;
+	align-items: center;
+	min-height: 100vh;
+}
+
+.main-container {
+	display: flex;
+	justify-content: center;
+	width: 1400px;
+	margin-top: 50px;
+}
+
+.container {
+	display: flex;
+	width: 100%;
+	max-width: 1400px;
+}
+
+.content-container {
+	display: flex;
+	flex-direction: column;
+	width: 1100px;
+	height: 750px;
+	background: #fff;
+	border-radius: 20px;
+	padding: 20px;
+	margin: 0 auto;
+	margin-left: 250px;
+	box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+}
+
+.content-header {
+	background-color: #ffe4d6;
+	padding: 20px;
+	border-radius: 15px;
+	margin-bottom: 20px;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.content-header h2 {
+	margin: 0;
+	color: #333;
+}
+
+.user-table-container {
+	overflow-y: auto;
+	max-height: calc(100% - 100px);
+}
+
+.user-table {
+	width: 100%;
+	border-collapse: collapse;
+}
+
+.user-table thead {
+	position: sticky;
+	top: 0;
+	background-color: #f8f8f8;
+	z-index: 1;
+}
+
+.user-table th, .user-table td {
+	padding: 16px;
+	text-align: center;
+	border-bottom: 1px solid #e6e4f0;
+}
+
+.user-table th {
+	background-color: #f8f8f8;
+	font-weight: bold;
+}
+
+.user-table tr:hover {
+	background-color: #f5f5f5;
+}
+
+.user-table td {
+	vertical-align: middle;
+	font-size: 15px;
+}
+
+td:hover {
+	cursor: pointer;
+}
+</style>
+</head>
+<body>
+	<div class="main-container">
+		<div class="side-bar">
+			<div th:replace="~{views/menu-bar.html}"></div>
+		</div>
+		<div class="container">
+			<div class="content-container">
+				<div class="content-header">
+					<h2>유저 목록</h2>
+				</div>
+				<div class="user-table-container">
+					<table class="user-table">
+						<thead>
+							<tr>
+								<th>아이디</th>
+								<th>이름</th>
+								<th>닉네임</th>
+								<th>전화번호</th>
+								<th>생년월일</th>
+								<th>힌트 질문</th>
+								<th>힌트 답</th>
+								<th>관리자 여부</th>
+								<th>회원 상태</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr th:each="user : ${list}">
+								<td th:text="${user.userId}"></td>
+								<td th:text="${user.userName}"></td>
+								<td th:text="${user.userNick}"></td>
+								<td th:text="${user.phone}"></td>
+								<td th:text="${#dates.format(user.birthDate, 'yyyy-MM-dd')}"></td>
+								<td th:text="${user.hint}"></td>
+								<td th:text="${user.hintAnswer}"></td>
+								<td th:text="${user.admin == 'N' ? '회원' : '관리자'}"
+									th:data-userid="${user.userId}" class="admin-toggle"></td>
+								<td th:text="${user.status == 'Y' ? '사용' : '탈퇴'}"
+									th:data-userid="${user.userId}" class="status-toggle"></td>
+
+							</tr>
+							<tr th:if="${list.empty}">
+								<td colspan="10">No users found</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+<script>
+	window.onload = () => {
+	    // 관리자 권한 버튼 이벤트
+	    document.querySelectorAll('.admin-toggle').forEach(element => {
+	        element.onclick = function() {
+	            const userId = this.getAttribute('data-userid');
+	            const currentStatus = this.textContent;
+	            const newStatus = currentStatus === '회원' ? 'Y' : 'N';
+	            toggleStatus(userId, newStatus, 'admin');
+	        };
+	    });
+	
+	    // 회원 상태 버튼 이벤트
+	    document.querySelectorAll('.status-toggle').forEach(element => {
+	        element.onclick = function() {
+	            const userId = this.getAttribute('data-userid');
+	            const currentStatus = this.textContent;
+	            const newStatus = currentStatus === '사용' ? 'N' : 'Y';
+	            toggleStatus(userId, newStatus, 'status');
+	        };
+	    });
+	    
+	 	// 서버에 상태 변경 요청을 보내는 함수
+	    function toggleStatus(userId, newStatus, type) {
+	    	// AJAX 요청 URL과 데이터 설정
+	        const url = type === 'admin' ? '/manager/toggleAdmin' : '/manager/toggleStatus';
+	        const data = type === 'admin' ? 
+	            { userId: userId, adminStatus: newStatus } : 
+	            { userId: userId, status: newStatus };
+	
+	        $.ajax({
+	            url: url,
+	            type: 'POST',
+	            data: data,
+	            dataType: 'json',
+	            success: function(response) {
+	                if (response.success) {
+	                    location.reload();
+	                } else {
+	                    alert(type === 'admin' ? '권한 변경에 실패했습니다.' : '상태 변경에 실패했습니다.');
+	                }
+	            },
+	            error: function() {
+	                alert('서버 오류가 발생했습니다.');
+	            }
+	        });
+	    }
+	};
+</script>
+</body>
+</html>

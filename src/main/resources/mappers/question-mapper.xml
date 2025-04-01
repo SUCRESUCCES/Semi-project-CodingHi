@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sinuedu.board.qna.model.mapper.QnaMapper">
+
+	<select id = "getListCount">
+		select count(*)
+		from qna q
+			 join users on(WRITER = USER_NO)
+			 join category using(CG_NO)
+		where q.status='Y'
+		<if test="category != null and condition != null">
+		and NOTICE = #{category} and ${condition} LIKE '%${search}%'
+		</if>
+		<if test="category != null and condition == null">
+		and NOTICE = #{category}
+		</if>
+		<if test="category == null and condition != null">
+		and ${condition} LIKE '%${search}%'
+		</if>
+	</select>
+
+	<select id="selectNoticeBoardList">
+    select *
+    from (
+        select *
+        from qna q
+        join users on (WRITER = USER_NO)
+        join category using(CG_NO)
+        where q.status='Y'
+        order by CREATE_DATE desc
+    )
+    where NOTICE = 'Y'
+    <if test="category == null">
+    and rownum <![CDATA[<]]>= 5
+    </if>
+    <if test="category != null and condition != null">
+    and ${condition} LIKE '%${search}%'
+    </if>
+    order by QNA_NO desc
+	</select>
+	
+	<select id="selectQnaBoardList">
+	select *
+		from qna q
+			 join users on(WRITER = USER_NO)
+			 join category using(CG_NO)
+		where notice = 'N' AND q.status='Y'
+		<if test="condition != null">
+		and ${condition} LIKE '%${search}%'
+		</if>
+		order by QNA_NO desc
+	</select>
+	
+	
+	<select id="selectReply">
+		select *
+		from reply r
+			 join users using(USER_NO)
+		where qna_no = #{qNo} AND r.status='Y'
+		order by REP_NO desc
+	</select>
+	
+	<update id="updateCount">
+		update QNA 
+		set VIEWS = VIEWS + 1 
+		where QNA_NO = #{QNA_NO}
+	</update>
+	
+	<insert id="insertBoard">
+		insert into qna
+		values(QNA_SEQ.nextval, #{qnaTitle}, #{qnaDetail}, #{writer}, 
+		sysdate, sysdate, #{views}, #{cgNo}, #{notice}, default)
+	</insert>
+	
+
+	
+	
+	<select id="selectBoard">
+		select *
+		from qna q
+			 join users on(WRITER = USER_NO)
+			 join category using(CG_NO)
+		where QNA_NO = #{qnaNo} AND q.status='Y'
+	</select>
+	
+	<select id="selectCategory">
+		select *
+		from category
+	</select>
+		
+	<update id="updateBoard">
+		update qna
+		set QNA_TITLE = #{qnaTitle}, QNA_DETAIL = #{qnaDetail}, UPDATE_DATE = sysdate, CG_NO = #{cgNo}
+		, notice = #{notice}
+		where QNA_NO = #{qnaNo}
+	</update>
+	
+    <!-- 전체 검색 (작성자, 제목, 내용) -->
+    <select id="searchAll">
+        SELECT *
+        FROM qna
+        WHERE (user_nick LIKE '%${search}%'
+           OR qna_title LIKE '%${search}%'
+           OR qna_detail LIKE '%${search}%')
+           AND status='Y'
+           
+    </select>
+	
+	<delete id="deletePost">
+        update qna
+		set status = 'N'
+		where QNA_NO = #{qnaNo}
+	</delete>
+
+	<!--madisson-->
+	<select id="PopularQna">
+		SELECT q.qna_no, q.qna_title, q.qna_detail, q.views,
+		(SELECT COUNT(*) FROM reply r WHERE r.qna_no = q.qna_no) AS replyCount
+		FROM qna q
+		WHERE q.status='Y'
+		ORDER BY q.views DESC
+		FETCH FIRST 3 ROWS ONLY
+	</select>
+
+	<select id="getRecentQnaByUser">
+		SELECT q.qna_no, q.qna_title, q.writer, q.create_date, q.views, c.cg_name
+		FROM qna q
+		JOIN category c ON q.cg_no = c.cg_no
+		WHERE q.writer = #{userNo} AND q.status='Y'
+		ORDER BY q.create_date DESC
+		FETCH FIRST 5 ROWS ONLY
+	</select>
+
+	<select id="getRecentCommentsByUser" resultType="com.sinuedu.board.qna.model.vo.reply">
+		SELECT r.rep_no, r.qna_no, r.user_no, r.rep_comment,
+		q.qna_title, c.cg_name
+		FROM reply r
+		JOIN qna q ON r.qna_no = q.qna_no
+		JOIN category c ON q.cg_no = c.cg_no
+		WHERE r.user_no = #{userNo} and r.status='Y'
+		ORDER BY r.rep_no DESC
+		FETCH FIRST 5 ROWS ONLY
+	</select>
+	
+	<!-- <select id="selectReplyList" resultType="reply">
+		select *
+		from Reply
+			join member using(user_no)
+		where QNA_NO = #{qNo}
+		order by REP_NO desc
+	</select> -->
+	
+	<!-- 인서트는 안고쳐도됨 -->
+	
+	<insert id="insertReply">
+	 <selectKey order="BEFORE" resultType="_int" keyProperty="repNo">
+      <!-- 수행되기 전에 내가 먼저 수행이 되겠다 -->
+         select REPLY_SEQ.nextval from dual
+      </selectKey>
+		insert into reply
+		values (#{repNo}, #{repComment}, #{userNo}, #{qnaNo}, default)
+	</insert>
+	
+	 <delete id="deleteReply">
+		update reply
+		set status = 'N'
+		where REP_NO = #{repNo}
+	</delete>
+	
+	<update id="updateReply">
+		update reply
+		set REP_COMMENT =#{repComment}
+		where REP_NO = #{repNo}
+	</update> 
+</mapper>

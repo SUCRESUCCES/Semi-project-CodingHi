@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>join3</title>
+<style>
+body {
+background-color:  #f9fbff;
+margin: 0;
+padding: 0;
+font-family: Arial, sans-serif;
+}
+
+.topbar {
+display: flex;
+align-items: center;
+justify-content: center;
+padding-top: 30px;
+padding-left: 0px;
+padding-bottom: 20px;
+margin-bottom: 50px;
+margin-top: 10px;
+height: 50px;
+width: 100%;
+}
+.menu-icon{
+position: 40px 60px;
+height: 40%; 
+margin-right: 250px;
+}
+.join{
+font-size: 30px;
+font-weight: bold;
+}    
+.main-contents-contain{
+background-color: white;
+width: 800px;
+height: 700px;
+box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.5);
+border-radius: 30px;
+margin: 0 auto;
+margin-top: 100px;
+}
+.steps {
+display: flex;
+justify-content: space-between;
+width: 100%;
+}
+.step {
+flex: 1;
+text-align: center;
+padding: 20px;
+width: 100%;
+font-weight: bold;
+}
+.step1 {
+border-radius: 30px 0 0 0;
+background-color: #DDE9FF;
+width: 33%;
+color: white;
+}
+.step2 {
+background-color: #B0CBEA;
+color: white;
+width: 33%;
+}
+.step3 {
+border-radius: 0 30px 0 0;
+background-color: #859EC6;
+width: 33%;
+}
+.content {
+text-align: center;
+}
+.next-button{
+margin: 0 auto;
+font-size: 20px;
+color: white;
+background-color: #5577ff;
+border: none;
+border-radius: 10px;
+cursor: pointer;
+width: 200px;
+margin-top: 10px;
+margin-bottom: 10px;
+}
+.join-button:hover {
+background-color: #4b5c6a;
+}
+.input{
+margin: 10px;
+padding: 12px;
+font-size: 16px;
+background-color: #f0f0f0;
+border: 2px solid #ccc;
+border-radius: 8px;
+box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+width: 400px;
+outline: none;
+text-align: left;
+}
+.agreeAll{
+margin-right: 230px;
+}
+.terms-list {
+margin-top: 20px;
+border: 2px solid #ccc;
+text-align: left;
+padding: 20px;
+margin-top: 20px;
+border-radius: 5px;
+width: 330px;
+margin-left: 220px;
+}
+.terms-list label {
+margin-left: 0px;
+}
+</style>
+</head>
+<body>
+    <div class="topbar">
+        <div class="menu-icon">
+            <div><img src="/photo/menuBar/logo2.png" height= "100px" width="100%" style="cursor: pointer;" id="clickImg"/></div>
+        </div>
+        <div class="join">
+            <p style="margin-bottom: 0; margin-right: 450px; margin-top: 80px;">회원가입</p>
+        </div>
+    </div>
+    <div class="main-contents-contain">
+    	<div class="divs">
+    		<form>
+		        <div class="steps">
+		            <div class="step step1">Step01</div>
+		            <div class="step step2">Step02</div>
+		            <div class="step step3">Step03</div>
+		        </div>
+		        <br/>
+		        <br/>
+		        <br/>
+		        <br/>
+		        <br/>
+		        <div class="content">
+		            <div class="congrats">
+		                <div><img src="/photo/join/congrats.png" height= "100px" width="100%"/></div>
+		            </div>
+		            <h2>축하합니다<br/>회원가입이 완료되었습니다</h2>
+		            <br/>
+		            <br/>
+		            <br/>
+		            <div class="next-button">
+		                <button class="next-button" id="nextButton" type="button">메인 페이지</button>
+		            </div>
+		        </div>
+			</form>
+    	</div>
+    </div>
+
+    <script>
+	    document.getElementById('clickImg').addEventListener('click', function () {
+	        window.location.href = '/';
+	    });
+	    
+	    document.getElementById('nextButton').addEventListener('click', function () {
+	        window.location.href = '/';
+	    });
+
+    </script>
+</body>
+</html>

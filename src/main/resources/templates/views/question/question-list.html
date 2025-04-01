@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>질문 게시판</title>
+<style>
+	* {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #F9FBFF;
+    display: flex;
+    justify-content: center;
+    
+}
+
+.main-container {
+	 display: flex;
+	 justify-content: center;
+	 width: auto;
+	 margin-top: 50px;
+}
+
+ul, li {
+	list-style: none;
+}
+
+.side-bar {
+      width: 200px;
+      height: 1000px;
+      position: sticky;
+      top: 100px;
+      margin: 50px;
+      margin-top: 8%;
+    }
+
+
+.container {
+    /* width: 100%;
+    margin: 0 auto;
+    align-items: center;
+    height: 100vh;
+    text-align: center;
+    max-width: 1420px;
+    width: 80%;
+    margin: 0 auto; */
+    
+    display: flex;
+    flex-direction: column;
+    width: auto;
+    padding: 20px;
+    margin: 0 auto;
+    text-align: center;
+    
+}
+
+.menu {
+    margin-top: 20px;
+}
+
+.menu ul {
+    list-style: none;
+}
+
+.menu ul li {
+    margin: 10px 0;
+}
+
+.menu ul li a {
+    text-decoration: none;
+    color: #333;
+    font-weight: bold;
+    display: block;
+}
+
+.menu ul li a:hover {
+    color: #007bff;
+}
+
+.content {
+    width: 80%;
+    /* padding: 20px; */
+    color: #605F5F;
+    display: inline-block;
+/*     padding-left: 10px; */
+   /*  float: right; */ 
+    padding: 20px;
+    width: 1200px;
+}
+
+.contentTable {
+    width: 1200px; /* 원하는 고정 크기 */
+    min-height: 580px;
+    margin: 0 auto; /* 가운데 정렬 */
+    background: #fff; /* 배경색 */
+    border-radius: 20px; /* 모서리 둥글게 */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* 그림자 추가 */
+}
+
+.contenthead{
+    margin-top: 100px;
+    background: #e3f7ff;
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    color: #605F5F;
+    padding: 15px;
+    /*height: 92px;*/
+}
+
+.tabs {
+    background: #E3EEFF;
+    
+}
+
+.tabs button {
+    flex: 1;
+    padding: 10px;
+    background: #E3EEFF;
+    border: none;
+    /* border-bottom: px solid transparent; */
+    cursor: pointer;
+}
+
+.tabs button:hover{
+    font-weight: bold;
+    border-bottom: 2px solid #605F5F;
+    color: #000000;
+}
+
+.tabs button.active{
+	font-weight: bold;
+    border-bottom: 2px solid #605F5F;
+    color: #000000;
+}
+    
+
+.table-container {
+    background: #fff;
+    overflow: hidden;
+    /* box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-bottom-left-radius: 20px;
+    border-bottom-right-radius: 20px; */
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+table th, table td {
+    padding: 10px;
+    text-align: center;
+    border-bottom: 1px solid #ccc;
+}
+
+td:hover{
+	cursor: pointer;
+}
+
+table th {
+    background: #f8f9fa;
+}
+
+.pagination {
+    margin: 10px 0;
+    text-align: center;
+}
+
+.pagination li {
+	display: inline-block;
+}
+
+.pagination a {
+    margin: 0 5px;
+    padding: 5px 10px;
+    text-decoration: none; 
+    background: hidden;
+    color: #605F5F;
+    border-radius: 4px;
+    
+} 
+
+/* .pagination a:hover, .pagination a.active{
+	font-weight: bold;
+    color: #000000;
+}
+ */
+
+.page-item.active .page-link {
+    /* background-color: #007bff;
+    color: white;
+    border-color: #007bff; */
+    color: black;
+    font-weight: bold;
+}
+
+.search {
+	display: flex;
+    position: relative;
+    margin: 10px auto;
+    margin-top: 20px;
+    text-align: center;
+    width: 400px;
+    border: 2px solid #E3EEFF;
+    border-radius: 33px;
+    background-color: white;
+    justify-content: space-between;
+    padding: 0 5px 0 10px;
+}
+
+.search select{
+    margin-right:5px;
+    border: 0;
+    border-radius: 4px;
+    background-color: rgba(0, 0, 0, 0);
+}
+
+input[type="search"] {
+    width: 75%;
+}
+
+.search input {
+    padding: 8px;
+   	position: relative;
+    border: 0;
+    border-radius: 4px;
+    /* background-color: rgba(0, 0, 0, 0); */ 
+}
+
+button#searchForm {
+    border: 0 solid #fff;
+    background: transparent;
+    padding: 6px;
+    cursor: pointer;
+}
+.write-button {
+    text-align: right;
+    margin: 10px 0;
+}
+
+.write-button button {
+    padding: 10px 20px;
+    background: #007bff;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+}
+	
+</style>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+<div class="main-container">
+	<div class="side-bar">
+    <div th:replace="~{views/menu-bar.html}"></div>
+ 	</div>
+    <div class="container">
+        <div class="content">
+        	<div class="contentTable">
+	            <div class="contenthead"><h2>질문 게시판</h2></div>
+	            <div class="tabs">
+	                <button class="categoryfilter" data-category="ALL" th:style="${category == null ? 'font-weight:bold; border-bottom: 2px solid #605F5F; color: #000000' : ''}">ALL</button>
+	                <button class="categoryfilter" data-category="NOTICE" th:style="${category == 'NOTICE' ? 'font-weight:bold; border-bottom: 2px solid #605F5F; color: #000000' : ''}">NOTICE</button>
+	                <button class="categoryfilter" data-category="Q&A" th:style="${category == 'Q&A' ? 'font-weight:bold; border-bottom: 2px solid #605F5F; color: #000000' : ''}">Q&A</button>
+	            </div>
+	            <div class="table-container">
+	                <table>
+	                    <thead>
+	                        <tr>
+	                            <th>no</th>
+	                            <th>카테고리</th>
+	                            <th>제목</th>
+	                            <th>작성자</th>
+	                            <th>작성일</th>
+	                            <th>조회수</th>
+	                        </tr>
+	                    </thead>
+	                    <tbody>                 
+	                       <tr th:each="q : ${list}">
+	                       		<td width="80px" th:style="${q.notice == 'Y' ? 'background-color:#F2F2F2; color:#F78181; font-weight:bold;' : ''}">[[${q.qnaNo}]]</td>
+	                       		<td width="150px" th:style="${q.notice == 'Y' ? 'background-color:#F2F2F2; color:#F78181; font-weight:bold;' : ''}">[[${q.cgName}]]</td>
+	                       		<td width="430px" 
+	   								th:text="${q.qnaTitle.length() > 20 ? q.qnaTitle.substring(0, 20) + '...' : q.qnaTitle}"
+	   								th:style="${q.notice == 'Y' ? 'background-color:#F2F2F2; color:#F78181; font-weight:bold;' : ''}"></td>
+	                       		<td width="150px" th:style="${q.notice == 'Y' ? 'background-color:#F2F2F2; color:#F78181; font-weight:bold;' : ''}">[[${q.userNick}]]</td>
+	                       		<td width="150px" th:style="${q.notice == 'Y' ? 'background-color:#F2F2F2; color:#F78181; font-weight:bold;' : ''}">[[${q.createDate}]]</td>
+	                       		<td th:style="${q.notice == 'Y' ? 'background-color:#F2F2F2; color:#F78181; font-weight:bold;' : ''}">[[${q.views}]]</td>
+	                       </tr>
+	                    </tbody>
+	                </table>
+	            </div>
+	      	</div>
+	            <div class="write-button">
+	                <button th:if="${session.loginUser != null}" th:onclick="location.href='/qna/write'">글쓰기</button>
+					<!-- 조건식은 넣어도 되고 안넣어도 상관없다?  th:if="${session.loginUser != null}" -->
+	            </div>
+	            <ul class="pagination" id="pagination">
+	            	
+	            	<!-- 검색 조건 없는 페이징 처리 -->
+	            	<th:block th:if="${search == null && condition ==null}">
+	            	<!-- 이전 버튼 -->
+		            <li class="page-item" th:classappend="${pi.currentPage == 1} ? 'disabled'">
+		               <a class="page-link" th:href="${pi.currentPage > 1} ? @{${loc}(page=${pi.currentPage-1})} : '#'" aria-label="Previous">
+		                  <span aria-hidden="true">&laquo;</span>
+		               </a>
+		            </li>
+	               <!-- 페이지 번호 -->
+		            <li class="page-item" th:each="p : ${#numbers.sequence(pi.startPage, pi.endPage)}" 
+		            					  th:classappend="${p == pi.currentPage} ? 'active'">
+		               <a class="page-link" th:href="@{${loc}(page=${p})}">[[${p}]]</a>
+		            </li>
+	
+	               <!-- 다음 버튼 -->
+		            <li class="page-item" th:classappend="${pi.currentPage == pi.maxPage} ? 'disabled'">
+		               <a class="page-link" th:href="${pi.currentPage < pi.maxPage} ? @{${loc}(page=${pi.currentPage+1})} : '#'" aria-label="Next">
+		                   <span aria-hidden="true">&raquo;</span></a>
+		            </li>
+		            </th:block>
+		            
+		            <!-- 검색조건시 페이징 처리 -->
+		            <th:block th:if="${search != null && condition !=null}">
+		            <!-- 이전 버튼 -->
+		            <li class="page-item" th:classappend="${pi.currentPage == 1} ? 'disabled'">
+		               <a class="page-link" th:href="${pi.currentPage > 1} ? @{${loc}(condition=${condition},search=${search},page=${pi.currentPage-1})} : '#'" aria-label="Previous">
+		                  <span aria-hidden="true">&laquo;</span>
+		               </a>
+		            </li>
+	               <!-- 페이지 번호 -->
+		            <li class="page-item" th:each="p : ${#numbers.sequence(pi.startPage, pi.endPage)}" 
+		            					  th:classappend="${p == pi.currentPage} ? 'active'">
+		               <a class="page-link" th:href="@{${loc}(condition=${condition},search=${search},page=${p})}">[[${p}]]</a>
+		            </li>
+	
+	               <!-- 다음 버튼 -->
+		            <li class="page-item" th:classappend="${pi.currentPage == pi.maxPage} ? 'disabled'">
+		               <a class="page-link" th:href="${pi.currentPage < pi.maxPage} ? @{${loc}(condition=${condition},search=${search},page=${pi.currentPage+1})} : '#'" aria-label="Next">
+		                   <span aria-hidden="true">&raquo;</span></a>
+		            </li>	            
+		            </th:block>
+		            
+		            
+		           	</ul>
+					<form onsubmit="return validateForm()">
+		            <div class="search">
+					    <select name="condition" id="condition">
+					        <option value="-" th:selected="${ condition == '-' }">----------</option>
+					        <option value="user_Nick" th:selected="${ condition == 'userNick' }">작성자</option>
+					        <option value="qna_Title" th:selected="${ condition == 'qnaTitle' }">제목</option>
+					        <option value="qna_Detail" th:selected="${ condition == 'qnaDetail' }">내용</option>
+					    </select>
+					    <input type="search" name="search" id="search" placeholder="검색어를 입력해 주세요." size="25px"
+					           th:value="${ value }">
+					    <button id="searchForm">
+					    	<svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="20" height="20" viewBox="0 0 24 24">
+							<path fill="#306263" d="M21.562,18.733l-2.767-2.767c-0.569-0.569-0.779-1.431-0.465-2.172	c0.588-1.386,0.822-2.957,0.57-4.609c-0.548-3.591-3.422-6.507-7.01-7.075c-5.779-0.915-10.695,4-9.779,9.779	c0.568,3.588,3.484,6.461,7.075,7.01c1.652,0.252,3.223,0.019,4.609-0.57c0.741-0.315,1.603-0.104,2.172,0.465l2.767,2.767	c0.586,0.586,1.536,0.586,2.121,0l0.707-0.707C22.148,20.269,22.148,19.319,21.562,18.733z M4,10.5C4,6.916,6.916,4,10.5,4	S17,6.916,17,10.5S14.084,17,10.5,17S4,14.084,4,10.5z"></path>
+							</svg>
+						</button>
+					</div>
+					</form>
+				
+			</div>
+    </div>
+</div>
+    <script th:inline="javascript">
+    	window.onload = () => {
+    		const form = document.querySelector('form');
+    		const tbody = document.querySelector('tbody');
+			const tds = tbody.querySelectorAll('td');
+
+			
+			//글 이동
+    		for(const td of tds){
+    			td.addEventListener('click', function(){
+    				const trTds = this.parentElement.querySelectorAll('td');
+    				const qnaNo = trTds[0].innerText;
+    				location.href="/qna/" + qnaNo + "/" + /*<![CDATA[*//*[[${pi.currentPage}]]*/1/*]]>*/;
+    			});
+    		}
+    	
+    		// 기존 tbody 내부의 모든 td에 클릭 이벤트 추가
+		    tbody.addEventListener('click', function (event) {
+		        const target = event.target;
+		        if (target.tagName === 'TD') {
+		            const tr = target.parentElement;
+		            const qnaNo = tr.querySelector('td:first-child').innerText; // 첫 번째 열의 값 가져오기
+		            location.href = "/qna/" + qnaNo + "/" + 1; // 현재 페이지 정보는 하드코딩된 값 (1)
+		        }
+		    });
+    		
+    		//카테고리 클릭
+		    $(document).ready(function () {
+			    $('.categoryfilter').on('click', function () {
+			        const category = $(this).data('category'); // 버튼의 data-category 
+			        if(category == 'ALL'){
+			        	location.href="/qna/list";
+			        }else{
+			        	location.href="/qna/list/" + category;
+			        }
+			    });
+			});
+		}
+    	function validateForm() {
+			console.log(1);
+			const condition = document.getElementById('condition').value;
+			const search = document.getElementById('search').value;
+			if(condition === '-' || condition === ''){
+				alert('검색 조건을 입력하세요');
+				return false; // 폼 제출을 막는다
+			}else if(search == ''){
+				alert('검색어를 입력하세요');
+				return false;
+			}else{
+				return true;
+			}
+			
+			document.addEventListener("DOMContentLoaded", function () {
+			    const pagination = document.getElementById("pagination");
+			    
+			    if (pagination) {
+			        pagination.addEventListener("click", function (event) {
+			            const target = event.target;
+
+			            // 클릭된 요소가 페이지 링크인지 확인
+			            if (target.tagName === "A" && target.classList.contains("page-link")) {
+			                event.preventDefault(); // 기본 동작 방지 (필요에 따라 제거 가능)
+
+			                // 모든 페이지 항목에서 active 클래스 제거
+			                const pageItems = pagination.querySelectorAll(".page-item");
+			                pageItems.forEach(item => item.classList.remove("active"));
+
+			                // 클릭된 요소의 부모 li에 active 클래스 추가
+			                const parentItem = target.closest(".page-item");
+			                if (parentItem) {
+			                    parentItem.classList.add("active");
+			                }
+
+			                // 페이지 이동을 위한 href 링크 처리
+			                const href = target.getAttribute("href");
+			                if (href && href !== "#") {
+			                    window.location.href = href; // 클릭한 페이지로 이동
+			                }
+			            }
+			        });
+			    }
+			});
+		}
+			  
+	
+    </script>
+</body>
+</html>

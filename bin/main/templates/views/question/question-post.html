@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+<title>질문 게시물</title>
+<style>
+* {
+	margin: 0;
+	padding: 0;
+}
+
+body {
+	font-family: Arial, sans-serif;
+	background-color: #F9FBFF;
+	display: flex;
+	justify-content: center;
+	/* align-items: center;
+	min-height: 100vh;
+	max-width: 1420px;
+	width: 80%;
+	margin: 0 auto; */
+}
+
+.main-container {
+	 display: flex;
+	 justify-content: center;
+	 width: auto;
+	 margin-top: 50px;
+}
+.side-bar {
+     width: 200px;
+     height: 1000px;
+     position: sticky;
+     top: 100px;
+     margin: 50px;
+     margin-top: 8%;
+    }	
+
+.qContainer {
+	/* width: 100%;
+	margin: 0 auto;
+	display: flex;
+	justify-content: center; */
+	
+	display: flex;
+    flex-direction: column;
+    width: auto;
+    padding: 20px;
+    box-sizing: border-box;
+    margin: 0 auto;
+	
+}
+
+.content {
+	width: 80%;
+	/* padding: 20px; */
+	color: #605F5F;
+	display: inline-block;
+	padding-left: px;
+	/* float: right; */
+	padding: 20px;
+	width: 1100px;
+}
+
+.userInfo {
+	margin-top: 100px;
+	background: #e3f7ff;
+	border-top-left-radius: 10px;
+	border-top-right-radius: 10px;
+	color: #605F5F;
+	padding: 15px;
+	/* height: auto; */
+	overflow: hidden;
+	text-align: center;
+}
+
+.userInfo input {
+	width: 20%;
+	padding: 5px;
+	border: 1px solid #ddd;
+	border-radius: 4px;
+}
+
+.writer {
+	float: left;
+	background-color: white;
+	width: 10%;
+	padding: 5px;
+	border: 1px solid #e3f7ff;
+	border-radius: 5px;
+	background-color: white;
+}
+
+.createDate {
+	background-color: white;
+	width: 15%;
+	padding: 5px;
+	border: 1px solid #e3f7ff;
+	border-radius: 5px;
+	display: inline-block;
+}
+
+.view {
+	float: right;
+	background-color: white;
+	width: 10%;
+	padding: 5px;
+	border: 1px solid #e3f7ff;
+	border-radius: 5px;
+}
+
+.titleSection {
+	flex: 1;
+	padding: 10px;
+	background: #E3EEFF;
+	text-align: center;
+}
+
+.category {
+	float: left;
+	margin-left: 5px;
+	background-color: white;
+	width: 15%;
+	padding: 8px;
+	border: 1px solid #e3f7ff;
+	border-radius: 5px;
+	display: inline-block;
+}
+
+.title {
+	background-color: white;
+	width: 50%;
+	padding: 8px;
+	border: 1px solid #e3f7ff;
+	border-radius: 5px;
+	display: inline-block;
+}
+
+.editPost {
+	border: 0 solid #fff;
+    background: transparent;
+	float: right;
+	width: 4%;
+	padding: 8px;
+	border-radius: 5px;
+	display: inline-block;
+}
+
+/* 이거 설정이 안됨 */
+.button#updateForm{
+	border: 0 solid #fff;
+    background: transparent;
+    top: 0;
+    right: 4px;
+    padding: 6px;
+}
+
+.zero {
+	float: right;
+}
+
+.question-container {
+	background: #fff;
+	overflow: hidden;
+	box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+	border-bottom-left-radius: 10px;
+	border-bottom-right-radius: 10px;
+}
+
+.questionDetail {
+	border-collapse: collapse;
+	margin: 30px;
+	min-height: 30vh;
+}
+
+.commentList {
+	margin: 30px;
+	/* 	padding : 15px; */
+	/* 	border: 1px solid #ddd; */
+	/* 	border-radius: 20px; */
+	/* 	padding: 15px; */
+	background: #fff;
+	overflow: hidden;
+	box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+	border-bottom-left-radius: 10px;
+	border-bottom-right-radius: 10px;
+}
+
+table {
+	width: 100%;
+	border-collapse: collapse;
+}
+
+table th, table td {
+	padding: 10px;
+	text-align: center;
+	border-bottom: 1px solid #ccc;
+}
+
+table th {
+	background: #FDFFDE;
+}
+
+.repComment{
+	text-align: left;
+}
+
+.comment-section {
+	margin: 20px;
+	padding: 15px;
+	/* border: 1px solid #ddd;
+	border-radius: 5px; */
+}
+
+.comment-section textarea {
+	width: 100%;
+	height: 100px;
+	padding: 10px;
+	font-size: 14px;
+	border: 1px solid #ddd;
+	border-radius: 4px;
+	resize: none;
+}
+
+.comment-section button {
+	margin: 10px;
+	margin-bottom: 30px;
+	padding: 10px 20px;
+	font-size: 14px;
+	background-color: #007bff;
+	color: white;
+	border: none;
+	border-radius: 30px;
+	cursor: pointer;
+	float: right;
+}
+
+.comment-section button:hover {
+	background-color: #0056b3;
+}
+</style>
+</head>
+<body>
+<div class="main-container">
+	<div class="side-bar">
+    <div th:replace="~{views/menu-bar.html}"></div>
+ 	</div>
+	<div class="qContainer">
+		<div class="content">
+			<form class="need" method="POST" id="detailForm" action="/qna/insertReply">
+			<input type="hidden" name="qnaNo" th:value="${q.qnaNo}">
+			<input type="hidden" name="page" th:value="${page}">
+				<div class="userInfo">
+					<span class="writer">[[${q.userNick}]]</span> 
+					<span class="createDate">[[${q.createDate}]]</span>
+					<span class="view">[[${q.views}]]</span>
+				</div>
+				<div class="titleSection">
+					<span class="category">[[${q.cgName}]]</span> 
+					<span class="title">[[${q.qnaTitle}]]</span> 
+					<th:block th:if="${session.loginUser != null && q.userNick eq session.loginUser.userNick}">
+					<span class="editPost">
+					<button type="button" th:onclick="|location.href='${page}/@{updatePost}'|" id="updateForm">
+					<svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="18" height="18" viewBox="0,0,256,256">
+					<g fill="#605f5f" fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal"><g transform="scale(5.33333,5.33333)"><path d="M36,5.00977c-1.7947,0 -3.58921,0.68037 -4.94922,2.04102l-22.13477,22.13281c-0.41998,0.41998 -0.72756,0.94226 -0.89062,1.51563l-2.9668,10.38867c-0.14899,0.52347 -0.00278,1.08658 0.38208,1.47144c0.38485,0.38485 0.94796,0.53107 1.47144,0.38208l10.39062,-2.9668c0.00065,-0.00065 0.0013,-0.0013 0.00195,-0.00195c0.56952,-0.16372 1.09052,-0.46748 1.51172,-0.88867l22.13281,-22.13476c2.72113,-2.72112 2.72113,-7.17731 0,-9.89844c-1.36001,-1.36064 -3.15452,-2.04102 -4.94922,-2.04102zM36,7.99219c1.0208,0 2.04018,0.39333 2.82617,1.17969c0.00065,0 0.0013,0 0.00195,0c1.57487,1.57488 1.57487,4.08137 0,5.65625l-1.93945,1.93945l-5.65625,-5.65625l1.93945,-1.93945c0.78599,-0.78636 1.80732,-1.17969 2.82813,-1.17969zM29.11133,13.23242l5.65625,5.65625l-18.07422,18.07422c-0.05863,0.05823 -0.13289,0.10283 -0.2168,0.12695l-7.79297,2.22656l2.22656,-7.79492c0,-0.00065 0,-0.0013 0,-0.00195c0.02293,-0.08063 0.06493,-0.15282 0.12695,-0.21484z"></path></g></g>
+					</svg></button></span>
+					</th:block>
+				</div>
+
+				<div class="question-container">
+					<div class="questionDetail" th:utext="${q.qnaDetail}"></div>
+					<div class="commentList">
+						<table>
+							<thead>
+								<tr>
+									<th width="15%">댓글 작성자</th>
+									<th width="75%">댓글</th>
+									<th width="10%"></th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr th:each="r : ${r}">
+									<td>[[${r.userNick}]]</td>
+									<td class="repComment">[[${r.repComment}]]</td>
+									<td>
+		                              	<th:block th:if="${session.loginUser != null && r.userNick eq session.loginUser.userNick}">
+		                                 <input type="hidden" th:value="${r.repNo}" name="repNo">
+		                                 <span class="updel"><!-- 수정(연필)아이콘 -->
+		                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil" viewBox="0 0 16 16"><path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325z"/></svg>
+		                                 </span>																<!-- currentColor : 기본색 -->
+		                                 &nbsp;
+		                                 <span class="updel"><!-- 삭제(쓰레기통) 아이콘 -->
+		                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash3" viewBox="0 0 16 16"><path d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5M11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H2.506a.58.58 0 0 0-.01 0H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1h-.995a.59.59 0 0 0-.01 0zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47ZM8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5"/></svg>
+		                                 </span>
+		                                 <input type="hidden" th:value="${r.repComment}">	<!-- 댓글 수정은 안하고 원래 댓글로 돌려놓으려고 할 때 사용 -->
+		                              </th:block>
+	                           		</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+					<div class="comment-section">
+						<textarea id="comment" name="repComment" placeholder="댓글을 남겨주세요"></textarea>
+						<button id="replySubmit">등록</button>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+<script th:inline="javascript">
+	const tbody = document.querySelector('tbody');
+// 	console.log(tbody);
+	
+	 /*<![CDATA[*/
+    document.getElementById('replySubmit').addEventListener('click', () => {
+       $.ajax({
+          url: '/qna/insertReply',
+          data:{
+        	repComment:document.getElementById('repComment').value
+          },
+          success:data => {
+        	console.log(data);
+        	
+        	tbody.innerHTML = '';
+        	
+        	for(const r of data){
+        		const tr = document.createElement('tr');
+        		
+        		const nickTd = document.createElement('td');
+        		const nickVal = document.createTextNode('r.userNick');
+        		nickTd.append(nickVal);
+        		
+        		const rContentTd = document.createElement('td');
+				const rContentVal = document.createTextNode(r.replyContent);
+				rContentTd.append(rContentVal);
+				
+				tr.append(nickTd);
+				tr.append(rContentTd);
+
+				const iconTd = document.createElement('td'); // <td></td>
+				iconTd.setAttribute('width', '80px'); // <td width="80px"></td>
+				if(r.userNick == /*[[${session.loginUser != null ? session.loginUser.getUserNick() : '' }]]*/'user01'){
+                    iconTd.innerHTML = '<input type="hidden" value="' + r.repNo + '" name="replyId"><span class="updel"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil" viewBox="0 0 16 16"><path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325z"/></svg></span> &nbsp; <span class="updel"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash3" viewBox="0 0 16 16"><path d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5M11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H2.506a.58.58 0 0 0-.01 0H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1h-.995a.59.59 0 0 0-.01 0zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47ZM8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5"/></svg></span><input type="hidden" value="' + r.replyContent + '">';
+                 }
+				tr.append(iconTd);
+				
+				tbody.append(tr);
+				}
+				document.getElementById('replyContent').value = '';
+           },
+           error: data => {
+              console.log(data);
+           }
+        });
+     });
+     /*]]>*/
+    
+        	tbody.addEventListener('mouseover', (e) =>{
+// 	       		console.log(e.target.tagName);
+	       		const eventTarget = e.target;
+	       		const targetTagName = eventTarget.tagName.toLowerCase();
+	       		switch(targetTagName){
+	       		case 'span': case 'svg': case 'path':
+	       			eventTarget.style.cursor = 'pointer';
+	       			if(targetTagName == 'path'){
+	       				eventTarget.setAttribute('fill', 'rgb(109, 179, 63)');
+	       				}else{
+	       					eventTarget.querySelector('path').setAttribute('fill', 'rgb(109, 179, 63)');
+	       				}
+	       			}
+	         });
+        	
+        	 tbody.addEventListener('mouseout', e => {
+//         		 console.log(e.target.tagName);
+	        	 const eventTarget = e.target;
+	        	 const targetTagName = eventTarget.tagName.toLowerCase();
+	        	 switch(targetTagName){
+	        	 case 'span': case 'svg': case 'path':
+	        		 if(targetTagName == 'path'){
+	        			 eventTarget.setAttribute('fill', 'currentColor');
+	        		 }else{
+	        			 eventTarget.querySelector('path').setAttribute('fill', 'currentColor');
+	        		 }
+	        	 }
+	        	 });
+          
+        	  tbody.addEventListener('click', e => {
+        		  	
+	         		const eventTarget = e.target;
+	         		const targetTagName = eventTarget.tagName.toLowerCase();
+	         		// console.log(targetTagName);
+	         		let targetSVG = null;
+	         		switch(targetTagName){
+	         		case 'span': targetSVG = eventTarget.children[0]; break;
+	         		case 'svg' : targetSVG = eventTarget; break;
+	         		case 'path' : targetSVG = eventTarget.parentElement;
+	         		}
+	         		
+// 	         		console.log(targetSVG);
+	         		
+	         		const myTd = targetSVG.parentElement.parentElement;
+	         		const contentTd = myTd.parentElement.children[1];	// 내용은 1번째 인덱스
+	         		const replyId = myTd.children[0].value;
+	         		
+// 	         		console.log(contentTd.children.length); 
+	         		
+	         		if(targetSVG != null){
+	         			// console.log(targetSVG.className.baseVal.includes);
+	         			if(targetSVG.className.baseVal.includes("pencil")){ // 클릭한 targetSVG가 연필일 때
+	         				// 수정할 수 있는 view 전환
+	         				
+	         				// console.log(document.getElementsByClassName('bi-check-lg')); // 배열의 길이가 생김
+	         				const beforeCheckArr = document.getElementsByClassName('bi-check-lg'); 
+	         				if(beforeCheckArr.length > 0){
+	         					// console.log(beforeCheckArr[0]);	// 이전에 있었던 체크 또는 엑스 svg
+	         					const beforeCheckTd = beforeCheckArr[0].parentElement.parentElement;
+	         					beforeCheckTd.parentElement.children[1].innerHTML = beforeCheckTd.children[3].value; // content 변경
+	         					beforeCheckTd.children[1].innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil" viewBox="0 0 16 16"><path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325z"/></svg>';
+	         					beforeCheckTd.children[2].innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash3" viewBox="0 0 16 16"><path d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5M11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H2.506a.58.58 0 0 0-.01 0H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1h-.995a.59.59 0 0 0-.01 0zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47ZM8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5"/></svg>';
+	         					
+	         				}
+	         				
+	         				contentTd.innerHTML = '<textarea rows="2" cols="30" style="resize:none">' + contentTd.innerText + '</textarea>'
+	         				myTd.children[1].innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-lg" viewBox="0 0 16 16"><path d="M12.736 3.97a.733.733 0 0 1 1.047 0c.286.289.29.756.01 1.05L7.88 12.01a.733.733 0 0 1-1.065.02L3.217 8.384a.757.757 0 0 1 0-1.06.733.733 0 0 1 1.047 0l3.052 3.093 5.4-6.425a.247.247 0 0 1 .02-.022"/></svg>'; // 아이콘을 가지고 있는 td
+	         				myTd.children[2].innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16"><path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/></svg>'
+	         				
+	         					
+	         			}else if(targetSVG.className.baseVal.includes("trash")){ // 클릭한 targetSVG가 쓰레기통일 때
+	         				if(confirm('정말 삭제하시겠습니까?')){
+	         					console.log("삭제 진행")
+	         					$.ajax({
+	         						url: '/qna/rdelete',
+	         						data: {rId : replyId},
+	         						success: data => {
+	         							
+	         							console.log(data);
+	         			   				if(data == 1){
+	         			   					myTd.parentElement.remove();
+	         			   				}else{
+	         			   					alert('댓글 삭제 중 오류가 발생했습니다.')
+	         			   				}
+	         						},
+	         						error: data => console.log(data)
+	         					});
+	         				}
+	         			}else if(targetSVG.className.baseVal.includes('check')){
+	         				// 수정 완료
+	         				console.log(contentTd.children[0].value);
+	         				$.ajax({
+	         					url: '/qna/rupdate',
+	         					data: { repNo : replyId ,
+	         							repComment : contentTd.children[0].value},	
+	         					success: data => {
+	         						if(data == 1){
+	         							contentTd.innerHTML = contentTd.children[0].value;
+	         							myTd.children[1].innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil" viewBox="0 0 16 16"><path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325z"/></svg>';
+		                                myTd.children[2].innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash3" viewBox="0 0 16 16"><path d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5M11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H2.506a.58.58 0 0 0-.01 0H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1h-.995a.59.59 0 0 0-.01 0zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47ZM8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5"/></svg>';
+	         							myTd.children[3].value = contentTd.innerText;	//
+	         						}else{
+	         						alert('댓글 수정 중 오류가 발생했습니다.')
+	         					}
+	         						},
+	         					error: data => console.log(data)
+	         					
+	         				});
+	         			}else if(targetSVG.className.baseVal.includes('x')){
+	         				// 수정 취소: 연필-삭제 view로 전환
+	         				contentTd.innerHTML = myTd.children[3].value;
+	         				//contentTd.innerHTML = contentTd.children[0].innerHTML;
+							myTd.children[1].innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil" viewBox="0 0 16 16"><path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325z"/></svg>';
+                         myTd.children[2].innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash3" viewBox="0 0 16 16"><path d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5M11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H2.506a.58.58 0 0 0-.01 0H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1h-.995a.59.59 0 0 0-.01 0zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47ZM8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5"/></svg>';
+	         			
+	         			}
+	         		}
+	         			
+	         	}); 
+	          
+
+</script>
+</body>
+</html>

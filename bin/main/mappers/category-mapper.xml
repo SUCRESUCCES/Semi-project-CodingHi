@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sinuedu.board.lecture.model.mapper.LectureMapper">
+	<select id="selectLectureList">
+		select *
+		from LECTURE
+			join category using(cg_no)
+		<if test="lecNo != null">
+		where LEC_NO= #{lecNo}
+		</if>
+		order by cg_no, LEC_NO
+	</select>
+	
+	<select id="selectImageList">
+		select *
+		from image
+		<if test="lecNo != null">
+		where ref_lec_no = #{lecNo}
+		</if>
+		order by img_no
+	</select>
+	
+	<select id="selectImage">
+		select *
+		from image
+		where ref_lec_no = #{lecNo}
+		order by img_no
+	</select>
+	
+	<select id="selectCategory">
+		select *
+		from LECTURE
+			 join category using(cg_no)
+		where CG_NAME= #{cgName}
+		order by LEC_NO
+	</select>
+	
+	<select id="chapterCount">
+		select count(*)
+		from chapter
+		where LEC_NO = #{lecNo}
+	</select>
+	
+	<select id="selectLecture">
+		select *
+		from chapter
+		where LEC_NO = #{lecNo}
+	</select>
+	
+	<select id="selectChapter">
+		select *
+		from chapter
+			 join LECTURE using(LEC_NO)
+			 join CATEGORY using(CG_NO)
+		where CHAP_NO = #{chapNo}
+	</select>
+	
+	<update id="updateCount">
+		update CHAPTER
+		set VIEWS = VIEWS+1
+		where CHAP_NO = #{chapNo}
+	</update>
+
+	<select id="dupViewChapter">
+		select count(*)
+		from VIEW_CHAPTER
+		where USER_NO = #{userNo} and CHAP_NO = #{chapNo}
+	</select>
+	
+	<insert id="viewChapter">
+		insert into VIEW_CHAPTER
+		values(#{userNo}, #{chapNo}, null)
+	</insert>
+	
+	<update id="rating">
+		update VIEW_CHAPTER
+		set USER_NO = #{userNo}, CHAP_NO = #{chapNo}, RATE = #{rating}
+		where USER_NO = #{userNo} and CHAP_NO = #{chapNo}
+	</update>
+	
+	<update id="chapRateAvg">
+		update chapter
+    	set CHAP_RATE = (select round(avg(rate),1)
+                     from VIEW_CHAPTER
+                     where chap_no = #{chapNo})
+    	where CHAP_NO = #{chapNo}
+	</update>
+
+<!--	추가한거-->
+	<select id="PopularLectures">
+		SELECT l.*, c.total_views
+		FROM lecture l
+		INNER JOIN (
+		SELECT lec_no, SUM(views) AS total_views
+		FROM chapter
+		GROUP BY lec_no
+		) c ON l.lec_no = c.lec_no
+		ORDER BY c.total_views DESC
+		FETCH FIRST 10 ROWS ONLY
+	</select>
+	
+	<select id="userProgressRate">
+	select count(*)
+	from chapter
+	     join view_chapter using(chap_no)
+	where user_no = #{userNo} and
+	      chap_no in(select chap_no
+	                 from chapter
+	                 where lec_no = #{lecNo})
+	</select>
+	
+	<select id="countBookmark">
+	select count(*)
+	from BOOKMARK_LECTURE
+	where USER_NO = #{userNo}  and LEC_NO = #{lecNo}
+	</select>
+	
+	<insert id="insertBookmark">
+	insert into BOOKMARK_LECTURE
+	values(#{userNo}, #{lecNo})
+	</insert>
+	
+	<delete id="deleteBookmark">
+	delete BOOKMARK_LECTURE
+	where USER_NO = #{userNo}  and LEC_NO = #{lecNo}
+	</delete>
+	
+	<select id="bookmarkCategory">
+	select *
+	from LECTURE
+		join BOOKMARK_LECTURE using(LEC_NO)
+	where LEC_NO= #{lecNo} and user_no = #{userNo}
+	order by LEC_NO
+	</select>
+	
+</mapper>
+

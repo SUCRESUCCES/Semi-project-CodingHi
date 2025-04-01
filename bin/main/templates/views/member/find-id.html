@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>find-id</title>
+<style>
+body {
+background-color:  #f9fbff;
+margin: 0;
+display: flex;
+justify-content: center;
+font-family: Arial, sans-serif;
+}
+.container {
+position: relative;
+display: flex;
+width: 100%;
+max-width: 1400px;
+}
+
+/* 메인 바*/
+.content-container{
+position: relative;
+top: 140px;
+display:flex;
+flex-direction: column;
+box-sizing: border-box;
+margin: 0 auto;
+height: 800px;
+width: 1100px;
+background: #FFF;
+border-radius: 20px;
+box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+}
+.steps{
+display: flex;
+justify-content: space-between;
+width: 100%;
+}		
+.step{
+flex: 1;
+text-align: center;
+padding: 20px;
+width: 100%;
+font-weight: bold;
+border-radius: 20px 20px 0 0;
+background-color: #C1D3FF;
+width: 100%;
+}
+.content {
+text-align: center;
+}
+.input{
+margin: 10px;
+padding: 12px;
+font-size: 16px;
+background-color: #f0f0f0;
+border: 2px solid #ccc;
+border-radius: 8px;
+box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+width: 380px;
+outline: none;
+text-align: left;
+}
+.birthdate input{
+margin: 10px;
+padding: 12px;
+font-size: 16px;
+background-color: #f0f0f0;
+border: 2px solid #ccc;
+border-radius: 8px;
+width: 70px;
+outline: none;
+text-align: left;
+}
+.phone input{
+margin: 10px;
+padding: 12px;
+font-size: 16px;
+background-color: #f0f0f0;
+border: 2px solid #ccc;
+border-radius: 8px;
+width: 80px;
+outline: none;
+text-align: left;
+}
+.next-button{
+margin: 0 auto;
+font-size: 20px;
+color: white;
+background-color: #5577ff;
+border: none;
+border-radius: 10px;
+cursor: pointer;
+width: 200px;
+margin-top: 10px;
+margin-bottom: 10px;
+}
+
+</style>
+</head>
+<body>
+    <div class="container">
+        <div class="content-container"> 
+			<div class="steps">
+				<div class="step">
+					아이디 찾기
+				</div>
+			</div>
+
+			<div class="content">
+				<form class="needs-validation" action="/member/find-id" method="POST">
+				<br/>
+				<h5>* 회원가입 시 입력했던 이름, 생년월일, 전화번호가 일치할 경우 해당 회원 정보의 아이디를 확인하실 수 있습니다.</h5>
+				<br/>
+					<div class="divs">
+			            <div class="div">
+			            	<label for="name"></label>
+				            <h5 style="margin-bottom: 0; margin-right: 370px;">이름</h5>
+							<input type="text" class="input" id="userName" name="userName" placeholder="이름을 입력하세요" />
+							<span id="pwdMessage" class="message"></span>
+						</div>
+				        <div class="phone">
+			                <h5 style="margin-bottom: 0; margin-right: 340px;">전화번호</h5>
+			                <input type="text" id="phone1" placeholder="010" maxlength="3" name="phone1">
+			                <span>-</span>
+			                <input type="text" id="phone2" placeholder="1234" maxlength="4" name="phone2">
+			                <span>-</span>
+			                <input type="text" id="phone3" placeholder="5678" maxlength="4" name="phone3">
+			            </div>
+						<div class="birthdate">
+			                <h5 style="margin-bottom: 0; margin-right: 340px;">생년월일</h5>
+			                <input type="text" id="year" placeholder="2000" maxlength="4" name="birth1">
+			                <span>년</span>
+			                <input type="text" id="month" placeholder="01" maxlength="2" name="birth2">
+			                <span>월</span>
+			                <input type="text" id="day" placeholder="01" maxlength="2" name="birth3">
+			                <span>일</span>
+			            </div>
+					</div>
+					<br/>
+					<br/>
+					<br/>
+					<br/>
+					<div class="next-button">
+						<button class="next-button" id="nextButton">다음 페이지</button>
+					</div>
+				</form>
+			</div>
+		</div>
+    </div>
+</body>
+</html>

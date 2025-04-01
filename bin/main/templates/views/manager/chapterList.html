@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="https://code.jquery.com/jquery-3.7.1.js"
+	integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4="
+	crossorigin="anonymous"></script>
+<title>챕터 목록</title>
+<style>
+body {
+	margin: 0;
+	font-family: Arial, sans-serif;
+	display: flex;
+	justify-content: center;
+	background-color: #f4f4f4;
+	align-items: center;
+	min-height: 100vh;
+}
+
+.main-container {
+	display: flex;
+	justify-content: center;
+	width: 1400px;
+	margin-top: 50px;
+}
+
+.container {
+	display: flex;
+	width: 100%;
+	max-width: 1400px;
+}
+
+.content-container {
+	display: flex;
+	flex-direction: column;
+	width: 1100px;
+	height: 750px;
+	background: #fff;
+	border-radius: 20px;
+	padding: 20px;
+	margin: 0 auto;
+	margin-left: 250px;
+	box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+	overflow: hidden;
+}
+
+.table-container {
+	overflow-y: auto;
+	flex-grow: 1;
+}
+
+.chapter-table {
+	width: 100%;
+	border-collapse: collapse;
+}
+
+.chapter-table thead {
+	position: sticky;
+	top: 0;
+	background-color: #f8f8f8;
+	z-index: 1;
+}
+
+.content-header {
+	background-color: #ffe4d6;
+	padding: 20px;
+	border-radius: 15px;
+	margin-bottom: 20px;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.content-header h2 {
+	margin: 0;
+	color: #333;
+}
+
+.chapter-table {
+	width: 100%;
+	border-collapse: collapse;
+}
+
+.chapter-table th, .chapter-table td {
+	padding: 11px;
+	text-align: center;
+	border-bottom: 1px solid #e6e4f0;
+}
+
+.chapter-table th {
+	background-color: #f8f8f8;
+	font-weight: bold;
+}
+
+.chapter-table tr:hover {
+	background-color: #f5f5f5;
+}
+
+.chapter-table td {
+	vertical-align: middle;
+}
+
+.chapter-table th:nth-child(3), .chapter-table td:nth-child(3) {
+	min-width: 200px;
+	max-width: 200px;
+	width: 200px;
+}
+
+.add-btn {
+	background-color: transparent;
+	color: #333;
+	border: none;
+	padding: 10px;
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 32px;
+	transition: all 0.3s ease;
+	width: 30px;
+	height: 30px;
+	border-radius: 50%;
+}
+
+.add-btn:hover {
+	background-color: rgba(0, 0, 0, 0.05);
+	transform: rotate(90deg);
+}
+
+.add-btn span {
+	font-weight: 300;
+	line-height: 1;
+}
+
+.action-buttons {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	gap: 8px;
+}
+
+.edit-btn, .delete-btn {
+	width: 32px;
+	height: 32px;
+	padding: 0;
+	border: none;
+	border-radius: 6px;
+	cursor: pointer;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	font-size: 16px;
+	transition: all 0.3s ease;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.edit-btn {
+	background-color: #7aa2ff;
+	color: white;
+}
+
+.delete-btn {
+	background-color: #ff9b9b;
+	color: white;
+}
+
+.edit-btn:hover {
+	background-color: #6088e0;
+}
+
+.delete-btn:hover {
+	background-color: #e88282;
+}
+
+.edit-btn:hover, .delete-btn:hover {
+	transform: translateY(-2px);
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+#categoryFilter, #lectureFilter {
+	width: 160px;
+	min-width: 160px;
+	max-width: 160px;
+	height: 30px;
+	padding: 5px;
+	border: 1px solid #ddd;
+	border-radius: 6px;
+	background-color: white;
+	cursor: pointer;
+	outline: none;
+	font-size: 15px;
+	font-weight: bold;
+	text-align: center;
+	appearance: none;
+	background-image:
+		url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+	background-repeat: no-repeat;
+	background-position: right 8px center;
+	background-size: 16px;
+	padding-right: 30px;
+	background-repeat: no-repeat;
+	background-position: right 8px center;
+	background-size: 16px;
+	background-position: right 8px center;
+	background-size: 16px;
+	height: 30px
+}
+
+#categoryFilter:hover, #lectureFilter:hover {
+	border-color: #4285f4;
+}
+
+#categoryFilter:focus, #lectureFilter:focus {
+	border-color: #4285f4;
+	box-shadow: 0 0 0 2px rgba(66, 133, 244, 0.1);
+}
+
+.modal {
+	display: none;
+	position: fixed;
+	z-index: 1;
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(0, 0, 0, 0.4);
+}
+
+.modal-content {
+	background-color: #fefefe;
+	margin: 15% auto;
+	padding: 20px;
+	border-radius: 15px;
+	width: 300px;
+	box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.modal-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 20px;
+}
+
+.modal-header h3 {
+	margin: 0;
+	color: #333;
+}
+
+.close {
+	color: #aaa;
+	font-size: 28px;
+	font-weight: bold;
+	cursor: pointer;
+}
+
+.close:hover {
+	color: #666;
+}
+
+.modal-body {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	gap: 10px;
+}
+
+.modal-btn {
+	flex: 1;
+	padding: 12px;
+	border: none;
+	border-radius: 8px;
+	cursor: pointer;
+	font-size: 14px;
+	transition: all 0.3s ease;
+}
+
+.modal-btn:hover {
+	transform: translateY(-2px);
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.lecture-btn {
+	background-color: #7aa2ff;
+	color: white;
+}
+
+.lecture-btn:hover {
+	background-color: #6088e0;
+}
+
+.chapter-btn {
+	background-color: #ff9b9b;
+	color: white;
+}
+
+.chapter-btn:hover {
+	background-color: #e88282;
+}
+
+#deleteModal h3 {
+	white-space: pre-line;
+}
+</style>
+</head>
+<body>
+	<div class="main-container">
+		<div class="side-bar">
+			<div th:replace="~{views/menu-bar.html}"></div>
+		</div>
+		<div class="container">
+			<div class="content-container">
+				<div class="content-header">
+					<h2>챕터 목록</h2>
+					<button class="add-btn">
+						<span>+</span>
+					</button>
+				</div>
+				<div class="table-container">
+					<table class="chapter-table">
+						<thead>
+							<tr>
+								<th><select id="categoryFilter">
+										<option value="">카테고리 선택</option>
+										<option th:each="category : ${categories}"
+											th:value="${category}" th:text="${category}"></option>
+								</select></th>
+								<th><select id="lectureFilter" disabled>
+										<option value="">강의 선택</option>
+								</select></th>
+								<th>챕터</th>
+								<th>마지막 수정 날짜</th>
+								<th>수정 / 삭제</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr th:each="chapter : ${list}">
+								<td th:text="${chapter.cgName}"></td>
+								<td th:text="${chapter.lecTitle}"></td>
+								<td th:text="${chapter.chapTitle}"></td>
+								<td th:text="${#dates.format(chapter.updateDate, 'yyyy-MM-dd')}"></td>
+								<td class="action-buttons">
+									<button class="edit-btn">
+										<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+											fill="currentColor" class="bi bi-pencil" viewBox="0 0 16 16"> <path
+												d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325z" /></svg>
+									</button>
+									<button class="delete-btn">
+										<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+											fill="currentColor" class="bi bi-trash3" viewBox="0 0 16 16"> <path
+												d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5ZM11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H2.506a.58.58 0 0 0-.01 0H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1h-.995a.59.59 0 0 0-.01 0H11Zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5h9.916Zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47ZM8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5Z" /></svg>
+									</button>
+								</td>
+								<td th:text="${chapter.chapNo}" style="display: none;"></td>
+							</tr>
+							<tr th:if="${list.empty}">
+								<td colspan="5">No chapters found</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+
+		<div id="addModal" class="modal">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h3>추가하기</h3>
+					<span class="close">&times;</span>
+				</div>
+				<div class="modal-body">
+					<button class="modal-btn lecture-btn">강의 추가</button>
+					<button class="modal-btn chapter-btn">챕터 추가</button>
+				</div>
+			</div>
+		</div>
+
+		<div id="deleteModal" class="modal">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h3></h3>
+					<input type="hidden">
+				</div>
+				<div class="modal-body">
+					<button class="modal-btn lecture-btn check-btn">확인</button>
+					<button class="modal-btn chapter-btn cancel-btn">취소</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+<script>
+	window.onload = () => {
+	    // 카테고리 필터 변경
+	    document.getElementById('categoryFilter').addEventListener('change', () => {
+	        updateLectureFilter();
+	        filterTable();
+	    });
+	
+	    // 강의 필터 변경
+	    document.getElementById('lectureFilter').addEventListener('change', filterTable);
+	
+	    // 추가 버튼
+	    document.querySelector('.add-btn').onclick = () => {
+	        document.getElementById('addModal').style.display = "block";
+	    }
+	
+	    // 모달 닫기 버튼
+	    document.querySelector('.close').onclick = () => {
+	        document.getElementById('addModal').style.display = "none";
+	    }
+	
+	    // 강의 추가 버튼
+	    document.querySelector('.lecture-btn').onclick = () => {
+	        window.location.href = '/manager/lectureAdd';
+	    }
+	
+	    // 챕터 추가 버튼
+	    document.querySelector('.chapter-btn').onclick = () => {
+	        window.location.href = '/manager/chapterAdd';
+	    }
+	
+	    // 수정 버튼
+	    document.querySelectorAll('.edit-btn').forEach(button => {
+	        button.onclick = function() {
+	            const row = this.closest('tr');
+	            const chapNo = row.querySelector('td:nth-child(6)').textContent;
+// 	            console.log(chapNo);
+	            window.location.href = `/manager/chapterEdit?chapNo=${encodeURIComponent(chapNo)}`;
+	        }
+	    });
+	
+	    const deleteModal = document.getElementById('deleteModal');
+	
+	    // 삭제 버튼
+	    document.querySelectorAll('.delete-btn').forEach(button => {
+	        button.onclick = function() {
+	            const chapterTitle = this.closest('tr').querySelector('td:nth-child(3)').textContent;
+	            const chapNo = this.closest('tr').querySelector('td:nth-child(6)').textContent;
+	            deleteModal.querySelector('input').value = chapNo;
+	            deleteModal.querySelector('h3').textContent = `'${chapterTitle}'를 \n 정말 삭제하시겠습니까?`;
+	            deleteModal.style.display = "block";
+	        }
+	    });
+	    
+	    // 삭제 확인 버튼
+	    deleteModal.querySelector('.check-btn').onclick = function() {
+	        const chapNo = deleteModal.querySelector('input').value
+// 	        console.log(chapNo);
+	        $.ajax({
+	            url: '/manager/deleteChapter',
+	            method: 'POST',
+	            data: { chapNo: chapNo },
+	            success: function(result) {
+	                if(result > 0) {
+	                    alert('챕터가 성공적으로 삭제되었습니다.');
+	                    location.reload();
+	                } else {
+	                    alert('챕터 삭제에 실패했습니다.');
+	                }
+	            },
+	            error: function(xhr, status, error) {
+	                console.error('Error:', error);
+	                alert('삭제 중 오류가 발생했습니다.');
+	            }
+	        });
+	    };
+	
+	    // 삭제 취소 버튼
+	    deleteModal.querySelector('.cancel-btn').onclick = () => {
+	        deleteModal.style.display = "none";
+	    }
+	
+	    // 모달 외부 클릭 시 닫기
+	    window.onclick = function(event) {
+	        if (event.target == document.getElementById('addModal')) {
+	            document.getElementById('addModal').style.display = "none";
+	        }
+	        if (event.target == deleteModal) {
+	            deleteModal.style.display = "none";
+	        }
+	    }
+	
+	    // 강의 필터 업데이트 함수
+	    function updateLectureFilter() {
+	        const selectedCategory = document.getElementById('categoryFilter').value;
+	        const lectureFilter = document.getElementById('lectureFilter');
+	        const rows = document.querySelectorAll('.chapter-table tbody tr');
+	        const lectures = new Set();
+	
+	        lectureFilter.innerHTML = '<option value="">강의 선택</option>';
+	        lectureFilter.disabled = !selectedCategory;
+	
+	        if (selectedCategory) {
+	            rows.forEach(row => {
+	                const category = row.querySelector('td:nth-child(1)').textContent;
+	                const lecture = row.querySelector('td:nth-child(2)').textContent;
+	                if (category === selectedCategory) {
+	                    lectures.add(lecture);
+	                }
+	            });
+	
+	            lectures.forEach(lecture => {
+	                const option = document.createElement('option');
+	                option.value = lecture;
+	                option.textContent = lecture;
+	                lectureFilter.appendChild(option);
+	            });
+	        }
+	    }
+	
+	    // 테이블 필터링 함수
+	    function filterTable() {
+	        const selectedCategory = document.getElementById('categoryFilter').value;
+	        const selectedLecture = document.getElementById('lectureFilter').value;
+	        const rows = document.querySelectorAll('.chapter-table tbody tr');
+	
+	        rows.forEach(row => {
+	            const category = row.querySelector('td:nth-child(1)').textContent;
+	            const lecture = row.querySelector('td:nth-child(2)').textContent;
+	            
+	            const categoryMatch = !selectedCategory || category === selectedCategory;
+	            const lectureMatch = !selectedLecture || lecture === selectedLecture;
+	
+	            row.style.display = categoryMatch && lectureMatch ? '' : 'none';
+	        });
+	    }
+	}
+</script>
+</body>
+</html>

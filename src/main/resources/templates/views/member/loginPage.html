@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>login</title>
+  <style>
+    body {
+      background-color: #f9fbff;
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      font-family: Arial, sans-serif;
+    }
+
+    .container {
+      position: relative;
+      display: flex;
+      width: 100%;
+      max-width: 1400px;
+    }
+
+    /* 메인 바*/
+    .content-container {
+      position: relative;
+      top: 140px;
+      display: flex;
+      flex-direction: column;
+      box-sizing: border-box;
+      margin: 0 auto;
+      height: 600px;
+      width: 1100px;
+      background: #FFF;
+      border-radius: 20px;
+      box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+    }
+
+    .steps {
+      display: flex;
+      justify-content: space-between;
+      width: 100%;
+    }
+
+    .step {
+      flex: 1;
+      text-align: center;
+      padding: 20px;
+      width: 100%;
+      color: white;
+      font-weight: bold;
+      border-radius: 20px 20px 0 0;
+      background-color: #4a77d4;
+      width: 100%;
+    }
+
+    .content {
+      text-align: center;
+    }
+
+    .input {
+      margin: 10px;
+      padding: 14px; /* 패딩 증가 */
+      font-size: 18px; /* 폰트 크기 증가 */
+      background-color: #f8f9fa;
+      border: 2px solid #ccc;
+      border-radius: 12px; /* 둥글게 */
+      box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+      width: 400px; /* 입력 필드 길이 증가 */
+      outline: none;
+      transition: border-color 0.3s, box-shadow 0.3s;
+    }
+
+    .input:focus {
+      border-color: #6a8eff;
+      box-shadow: 0 0 8px rgba(106, 142, 255, 0.5);
+    }
+
+    /* 로그인 버튼 스타일 개선 */
+    button {
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: 8px; /* 둥글게 */
+      background-color: #4a77d4;
+      color: white;
+      font-size: 16px; /* 폰트 크기 증가 */
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.3s, transform 0.2s;
+    }
+
+    button:hover {
+      background-color: #365899;
+    }
+
+    button:active {
+      background-color: #2a4a7b;
+      transform: scale(0.98);
+    }
+
+    .login-container {
+      display: flex;
+      align-items: center; /* 입력 필드와 버튼의 높이를 맞춤 */
+      justify-content: center;
+      margin-top: 20px;
+    }
+
+    /* 입력 필드들을 세로 배치 */
+    .input-container {
+      display: flex;
+      flex-direction: column;
+      margin-right: 10px; /* 버튼과 간격 추가 */
+    }
+
+    .input {
+      margin-bottom: 10px; /* 필드 간 간격 */
+      padding: 14px;
+      font-size: 16px;
+      background-color: #f8f9fa;
+      border: 2px solid #ccc;
+      border-radius: 8px;
+      width: 300px; /* 입력 필드 길이 */
+      outline: none;
+      transition: border-color 0.3s, box-shadow 0.3s;
+    }
+
+    .input:focus {
+      border-color: #6a8eff;
+      box-shadow: 0 0 8px rgba(106, 142, 255, 0.5);
+    }
+
+    .login-button {
+      padding: 15px;
+      border: none;
+      border-radius: 8px;
+      background-color: #4a77d4;
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+      width: 120px;
+      height: 110px;
+      cursor: pointer;
+      transition: background-color 0.3s, transform 0.2s;
+    }
+
+    .login-button:hover {
+      background-color: #365899;
+    }
+
+    .login-button:active {
+      background-color: #2a4a7b;
+      transform: scale(0.98);
+    }
+
+    .login-user {
+      margin: 4px;
+      padding: 15px;
+      width: 160px;
+      height: 150px;
+      border-radius: 20px;
+      border: 1px solid #dfdfdf;
+    }
+
+    .login-form {
+      margin: 4px;
+      padding: 15px;
+      width: 160px;
+      height: 210px;
+      border-radius: 20px;
+      border: 1px solid #dfdfdf;
+    }
+
+    .login-form input {
+      width: 150px;
+      height: 30px;
+      padding: 4px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 11px;
+    }
+
+    .login-form button, .login-user button {
+      width: 100%;
+      padding: 9px;
+      border: none;
+      border-radius: 5px;
+      background-color: #57f;
+      color: #ffffff;
+      font-size: 12px;
+      cursor: pointer;
+      transition: background-color 0.3s, color 0.3s;
+      margin-top: 8px;
+    }
+
+    .login-form button:hover, .login-user button:hover {
+      background-color: #1e5491;
+    }
+
+    .login-form button:active, .login-user button:active {
+      background-color: #6a8eff;
+      color: white;
+    }
+
+    .links {
+      margin-top: 8px;
+      font-size: 14px;
+      color: #888;
+      text-align: center;
+    }
+
+    .links a {
+      color: #6a8eff;
+      text-decoration: none;
+    }
+
+    .links a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="content-container">
+    <div class="steps">
+      <div class="step">로그인</div>
+    </div>
+    <div class="content">
+      <form class="needs-validation" action="/member/login" method="POST">
+        <h5>아이디와 비밀번호를 입력해주세요.</h5>
+        <br /> <br /> <br /> <br />
+        <div class="login-container">
+          <div class="input-container">
+            <input class="input" type="text" placeholder="아이디를 입력해주세요."
+                   name="userId"> <input class="input" type="password"
+                                         placeholder="비밀번호를 입력해주세요." name="userPw">
+          </div>
+          <button class="login-button">Sign In</button>
+        </div>
+
+        <div class="links">
+          <a href="/member/join">회원가입</a> / <a href="/member/find-id">아이디</a>
+          / <a href="/member/find-pwd">패스워드 찾기</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+</body>
+</html>
